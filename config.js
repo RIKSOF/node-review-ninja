@@ -14,8 +14,9 @@ config.app.mode.current = config.app.mode.DEVELOPMENT;
 
 // Log files
 config.logger = {}
-config.logger.errorFile = __dirname + '/logs/error.log';
-config.logger.consoleFile = __dirname + '/logs/console.log';
+config.logger.dir = __dirname + '/logs/';
+config.logger.errorFile = 'error.log';
+config.logger.consoleFile = 'console.log';
 config.logger.maxFileSize = 1000000;
 config.logger.maxFiles = 1;
 
