@@ -21,5 +21,9 @@ config.logger.consoleFile = 'console.log';
 config.logger.maxFileSize = 1000000;
 config.logger.maxFiles = 1;
 
+// GitHub Connection
+config.github = {}
+config.github.personalToken = '';
+
 // Make the configuration parameters available.
 module.exports = config;
