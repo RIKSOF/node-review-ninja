@@ -1,0 +1,9 @@
+{
+  "name": "node-review-ninja",
+  "description": "Review pull requests. Integrates with GitHub, Slack and Trello.",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "winston": "2.1.1" 
+	}
+}
