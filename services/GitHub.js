@@ -17,7 +17,7 @@ github.setup = function ( token ) {
     // required
     version: "3.0.0",
     // optional
-    debug: true,
+    debug: false,
     protocol: "https",
     host: "api.github.com", // should be api.github.com for GitHub
     pathPrefix: "", // for some GHEs; none for GitHub
@@ -49,5 +49,5 @@ github.getDiff = function ( u, callback ) {
   }, callback );
 }
    
-// Make the logger available to all
+// Make the module available to all
 module.exports = github;
