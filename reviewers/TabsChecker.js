@@ -5,8 +5,6 @@
  */
 
 checker = {
-  name: 'Commit has tabs instead of spaces',
-  
   /**
    * Function is used to reset the checker for next pull review.
    */

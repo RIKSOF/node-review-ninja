@@ -23,6 +23,7 @@ var parse = require('parse-diff');
 // Checkers
 var checkers = [
   require( __dirname + '/reviewers/TabsChecker' ),
+  require( __dirname + '/reviewers/GrammarChecker' ),
 ]
 
 var ninja = setInterval( function( ) {
