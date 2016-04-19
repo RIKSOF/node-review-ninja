@@ -37,7 +37,7 @@ checker = {
    * @param path        File path
    * @param position    Position in file
    */
-  step: function( change, path, position ) {
+  step: function( change, path, position, callback ) {
     var findTabs = /(\t+)/g;
     var comment = null;
     
@@ -50,7 +50,7 @@ checker = {
       }
     }
     
-    return comment;
+    callback( comment );
   }
 }
 

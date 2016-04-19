@@ -8,6 +8,7 @@
     "oauth": "0.9.14",
     "github": "0.2.4",
     "parse-diff": "0.3.2",
-    "gingerbread": "0.5.0"
+    "gingerbread": "0.5.0",
+    "underscore": "1.8.3"
 	}
 }

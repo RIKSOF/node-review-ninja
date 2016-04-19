@@ -10,6 +10,9 @@ var config = require( __dirname + '/config' );
 // Our logger for logging to file and console
 var logger = require( __dirname + '/services/Logger' );
 
+// Underscore library
+var _ = require( 'underscore' );
+
 // Setup the directories if they are not there. This is done just once.
 logger.setupDirectory();
 
@@ -35,7 +38,6 @@ var ninja = setInterval( function( ) {
     } else {
       
       // Comments on this pull request.
-      var comments = [];
       var commit_id = '4d4f0388440da8a51d0cf68a5f8a85b0db0962ca';
       
       // Reset checkers for this pull request.
@@ -67,23 +69,34 @@ var ninja = setInterval( function( ) {
             position++;
             
             // Test against all validators
-            validators.forEach( function( c ) {
-              var body = c.step( change, path, position );
+            ( function ( chng, pth, pos, cid ) {
+              var comments = [];
+              var done = _.after( validators.length, function() {
+                console.log( JSON.stringify(comments) );
+              })
               
-              if ( body ) {
-                comments.push( {
-                  body: body,
-                  commit_id: commit_id,
-                  path: path,
-                  position: position
+              validators.forEach( function( c ) {
+                c.step( chng, pth, pos, function( body ) {
+                  if ( pos == 420 ) {
+                    console.log( '>>>>>>>>>>>' + chng.content );
+                  }
+                  
+                  if ( body != '' ) {
+                    comments.push({
+                      body: body,
+                      commit_id: cid,
+                      path: pth,
+                      position: pos
+                    });
+                  }
+                  
+                  done();
                 });
-              }
-            });
+              });
+            }) ( change, path, position, commit_id );
           });
         });
       });
-      
-      console.log( JSON.stringify( comments ));
     }
   });
   

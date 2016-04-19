@@ -39,8 +39,9 @@ checker = {
    * @param change      Line being read
    * @param path        File path
    * @param position    Position in file
+   * @param callback    Once processing is done.
    */
-  step: function( change, path, position ) {
+  step: function( change, path, position, callback ) {
     var gingerbread = require('gingerbread');
     var comment = null;
     var quotedStrings1 = /[']([@#$%&()a-zA-Z0-9.!?" ]*)[']/g; 
@@ -54,15 +55,23 @@ checker = {
       // Compose a string of all quotes to check against.
       var composedLine = '';
       
+      // Make sure we send the comments just once per call.
+      var count = 0;
+      var done = false;
+      var comment = position + ': ';
+      
       for ( i = 0; i < quotedStrings.length; i++ ) {
         findQuotedStrings = quotedStrings[i];
       
         while ( result = findQuotedStrings.exec( line ) ) {
           (function( composedLine ) {
+            count++;
+            
             gingerbread( composedLine, function (error, text, result, corrections) {
-              if ( corrections.length > 0 ) {
-                comment = '';
-          
+              count--;
+              
+              if ( corrections && corrections.length > 0 ) {
+                
                 // We should allow case sensitive suggestions only if its a sentence.
                 var allowCaseSensitive = false;
                 if ( composedLine.indexOf(' ') >= 0 ) {
@@ -74,22 +83,22 @@ checker = {
                   // Also ignore spaces for single words.
                   if ( allowCaseSensitive == false && c.text.toLowerCase() == c.correct.toLowerCase().replace(/ /g, '')) {
                   } else if ( c.correct != '' ) {
-                    comment += 'For ' + c.text + ' did you mean ' + c.correct + '?';
+                    comment += 'For ' + c.text + ' did you mean ' + c.correct + '? ';
                   }
-                }); 
-          
-                if ( comment != '' ) {
-                  console.log( comment );
-                  console.log( change.content );  
-                }
+                });
+              }
+              
+              if ( done && count <= 0 ) {
+                callback( comment );
               }
             });
           })( result[1] );
         }
       }
+      
+      // We are done!
+      done = true;
     }
-    
-    return comment;
   }
 }
 
