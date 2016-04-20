@@ -116,6 +116,50 @@ github.commentOnPull = function ( u, comment, callback ) {
   
   github.api.pullRequests.createComment( comment, callback );
 }
+
+/**
+ * Get repositories
+ *
+ * @param org       Organization.
+ * @param callback  Callback once response is received.
+ */
+github.getRepositories = function ( org, callback ) {
+  // Our logger for logging to file and console
+  var logger = require( __dirname + '/../services/Logger' );
+  
+  github.api.repos.getFromOrg({
+    org: org
+  }, function( err, res ) {
+    if ( err ) {
+      logger.error( err );
+    }
    
+    callback( eval( res ));
+  });
+}
+
+/**
+ * Get the list of all pulls for a repository.
+ * 
+ * @param org       Organization
+ * @param repo      Repository
+ * @param callback  Callback once response is received.
+ */
+github.getAllPulls = function ( org, repo, callback ) {
+  // Our logger for logging to file and console
+  var logger = require( __dirname + '/../services/Logger' );
+  
+  github.api.pullRequests.getAll({
+    user: org,
+    repo: repo
+  }, function( err, res ) {
+    if ( err ) {
+      logger.error( err );
+    }
+   
+    callback( eval( res ));
+  });
+}
+
 // Make the module available to all
 module.exports = github;

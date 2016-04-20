@@ -132,6 +132,27 @@ reviewer.review = function ( url, commit_id, callback ) {
 }
 
 /**
+ * Get the list of all repositories.
+ * 
+ * @param org       Organization
+ * @param callback  Callback once response is received.
+ */
+reviewer.getRepositories = function( org, callback ) {
+  github.getRepositories( org, callback );
+}
+
+/**
+ * Get the list of all pulls for a repository.
+ * 
+ * @param org       Organization
+ * @param repo      Repository
+ * @param callback  Callback once response is received.
+ */
+reviewer.getAllPulls = function( org, repo, callback ) {
+  github.getAllPulls( org, repo, callback );
+}
+
+/**
  * Get the pull request details
  *
  * @param url       URL for pull request.
