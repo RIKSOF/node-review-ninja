@@ -23,6 +23,7 @@ config.logger.maxFiles = 1;
 
 // GitHub Connection
 config.github = {}
+config.github.org = '';
 config.github.personalToken = '';
 
 // Make the configuration parameters available.

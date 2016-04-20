@@ -19,7 +19,7 @@ logger.setupDirectory();
 //var ninja = setInterval( function( ) {
   logger.info( 'Searching for bad pull requests...' );
   
-  var org = 'RIKSOF';
+  var org = config.github.org;
   
   // Get all repositories
   reviewer.getRepositories( org, function( repos ) {
