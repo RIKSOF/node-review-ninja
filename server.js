@@ -29,7 +29,7 @@ var checkers = [
   require( __dirname + '/reviewers/GrammarChecker' ),
 ]
 
-var ninja = setInterval( function( ) {
+//var ninja = setInterval( function( ) {
   logger.info( 'Searching for bad pull requests...' );
   
   github.getDiff( 'https://github.com/RIKSOF/yayvo/pull/527', function(err, res) {
@@ -47,6 +47,10 @@ var ninja = setInterval( function( ) {
       
       // Parse through all changes in the diff.
       var files = parse( res );
+      var fileProcessed = _.after( files.length, function() {
+        logger.info( 'Done searching!' );
+      });
+      
       files.forEach( function( file ) {
       
         // Name of the new file. Refresh the position.
@@ -60,47 +64,67 @@ var ninja = setInterval( function( ) {
             validators.push( c );
           }
         });
+        
+        // Track when all chunks are processed.
+        var chunkProcessed = _.after( file.chunks.length, function() {
+          fileProcessed();
+        });
       
         // Go through all chunks in the new file.
-        file.chunks.forEach( function( chunk ) {
-          chunk.changes.forEach( function( change ) {
+        if ( file.chunks.length > 0 ) {
           
-            // Each line is a line :)
-            position++;
+          file.chunks.forEach( function( chunk ) {
+          
+            // Track when a line is processed.
+            var linesProcessed = _.after( chunk.changes.length, function() {
+              chunkProcessed();
+            });
+          
+            chunk.changes.forEach( function( change ) {
+          
+              // Each line is a line :)
+              position++;
             
-            // Test against all validators
-            ( function ( chng, pth, pos, cid ) {
-              var comments = [];
-              var done = _.after( validators.length, function() {
-                console.log( JSON.stringify(comments) );
-              })
+              // Test against all validators
+              ( function ( chng, pth, pos, cid ) {
+                var comments = [];
+                var done = _.after( validators.length, function() {
+                  
+                  if ( comments.length > 0 ) {
+                    console.log( JSON.stringify(comments) );
+                  }
+                  
+                  linesProcessed();
+                })
               
-              validators.forEach( function( c ) {
-                c.step( chng, pth, pos, function( body ) {
-                  if ( pos == 420 ) {
-                    console.log( '>>>>>>>>>>>' + chng.content );
-                  }
+                if ( validators.length > 0 ) {
+                  validators.forEach( function( c ) {
+                    c.step( chng, pth, pos, function( body ) {
+                      if ( body != '' ) {
+                        comments.push({
+                          body: body,
+                          commit_id: cid,
+                          path: pth,
+                          position: pos
+                        });
+                      }
                   
-                  if ( body != '' ) {
-                    comments.push({
-                      body: body,
-                      commit_id: cid,
-                      path: pth,
-                      position: pos
+                      done();
                     });
-                  }
-                  
+                  });
+                } else {
                   done();
-                });
-              });
-            }) ( change, path, position, commit_id );
+                }
+              
+              }) ( change, path, position, commit_id );
+            });
           });
-        });
+        } else {
+          fileProcessed();
+        }
       });
     }
   });
-  
-  logger.info( 'Done searching!' );
-}, config.app.interval );
+//}, config.app.interval );
 
 logger.info( 'Review Ninja is up and kicking...' );

@@ -43,7 +43,7 @@ checker = {
    */
   step: function( change, path, position, callback ) {
     var gingerbread = require('gingerbread');
-    var comment = null;
+    var comment = '';
     var quotedStrings1 = /[']([@#$%&()a-zA-Z0-9.!?" ]*)[']/g; 
     var quotedStrings2 = /["]([@#$%&()a-zA-Z0-9.!?' ]*)["]/g;
     var quotedStrings = [quotedStrings1, quotedStrings2];
@@ -58,12 +58,14 @@ checker = {
       // Make sure we send the comments just once per call.
       var count = 0;
       var done = false;
-      var comment = position + ': ';
+      var nothingToDo = true;
       
       for ( i = 0; i < quotedStrings.length; i++ ) {
         findQuotedStrings = quotedStrings[i];
       
         while ( result = findQuotedStrings.exec( line ) ) {
+          nothingToDo = false;
+          
           (function( composedLine ) {
             count++;
             
@@ -98,8 +100,17 @@ checker = {
       
       // We are done!
       done = true;
+      
+      // If we had nothing to do, then send empty comments.
+      if ( nothingToDo ) {
+        callback( comment );
+      }
+      
+    } else {
+      // No comment on this line
+      callback( comment );
     }
-  }
+  } 
 }
 
 // Make the module available to all

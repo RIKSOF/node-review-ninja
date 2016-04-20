@@ -36,10 +36,11 @@ checker = {
    * @param change      Line being read
    * @param path        File path
    * @param position    Position in file
+   * @param callback    Once processing is done.
    */
   step: function( change, path, position, callback ) {
     var findTabs = /(\t+)/g;
-    var comment = null;
+    var comment = '';
     
     // This checker only worries about changes that were added.
     if ( change.add ) {
