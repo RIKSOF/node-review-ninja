@@ -19,8 +19,12 @@ logger.setupDirectory();
 //var ninja = setInterval( function( ) {
   logger.info( 'Searching for bad pull requests...' );
   
-  reviewer.review( 'https://github.com/RIKSOF/yayvo/pull/527', function( fail ) {
-    logger.info( 'Done searching!' );
+  var url = 'https://github.com/RIKSOF/checout/pull/88';
+  
+  reviewer.getPullRequestDetails( url, function( details ) {
+    reviewer.review( url, details.head.sha, function( fail ) {
+      logger.info( 'Done searching!' );
+    });
   });
 //}, config.app.interval );
 

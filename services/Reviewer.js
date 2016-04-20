@@ -12,32 +12,27 @@ var checkers = [
   require( __dirname + '/../reviewers/GrammarChecker' ),
 ]
 
+// Get the configurations
+var config = require( __dirname + '/../config' );
+
+// Our logger for logging to file and console
+var logger = require( __dirname + '/../services/Logger' );
+
+// Setup git token.
+var github = require( __dirname + '/../services/GitHub' );
+github.setup( config.github.personalToken );
+
 /**
  * Perform review of a pull request!
  *
  * @param url       Pull request URL.
+ * @param commit_id Commit id
  * @param callback  Callback once reviewed.
  */
-reviewer.review = function ( url, callback ) {
+reviewer.review = function ( url, commit_id, callback ) {
   
   // Underscore library
   var _ = require( 'underscore' );
-  
-  // Get the configurations
-  var config = require( __dirname + '/../config' );
-
-  // Our logger for logging to file and console
-  var logger = require( __dirname + '/../services/Logger' );
-  
-  // Get the configurations
-  var config = require( __dirname + '/../config' );
-
-  // Our logger for logging to file and console
-  var logger = require( __dirname + '/../services/Logger' );
-  
-  // Setup git token.
-  var github = require( __dirname + '/../services/GitHub' );
-  github.setup( config.github.personalToken );
 
   // Diff service
   var parse = require('parse-diff');
@@ -46,9 +41,6 @@ reviewer.review = function ( url, callback ) {
     if ( err ) {
       logger.error( err );
     } else {
-      
-      // Comments on this pull request.
-      var commit_id = '4d4f0388440da8a51d0cf68a5f8a85b0db0962ca';
       
       // Reset checkers for this pull request.
       checkers.forEach( function( c ) {
@@ -92,9 +84,9 @@ reviewer.review = function ( url, callback ) {
           
             chunk.changes.forEach( function( change ) {
           
-              // Each line is a line :)
+              // Each line that is normal or added is counted
               position++;
-            
+              
               // Test against all validators
               ( function ( chng, pth, pos, cid ) {
                 var comments = [];
@@ -102,7 +94,8 @@ reviewer.review = function ( url, callback ) {
                   
                   if ( comments.length > 0 ) {
                     // Post these comments to git
-                    console.log( JSON.stringify(comments) );
+                    reviewer.comment( url, comments, function() {
+                    });
                   }
                   
                   linesProcessed();
@@ -135,6 +128,46 @@ reviewer.review = function ( url, callback ) {
         }
       });
     }
+  });
+}
+
+/**
+ * Get the pull request details
+ *
+ * @param url       URL for pull request.
+ * @param callback  Callback once response is received.
+ */
+reviewer.getPullRequestDetails = function ( url, callback ) {
+  github.getPullRequestDetails( url, callback );
+}
+
+/**
+ * Post comments to a pull request
+ *
+ * @param url       URL for pull request.
+ * @param comments  Array of comments.
+ * @param callback  Callback once comments are posted.
+ */
+reviewer.comment = function ( url, comments, callback ) {
+  
+  // Underscore library
+  var _ = require( 'underscore' );
+  
+  // Once all comments are posted.
+  var posted = _.after( comments.length, function() {
+    callback();
+  })
+  
+  comments.forEach( function( c ) {
+    github.commentOnPull( url, c, function(err, res) {
+      if ( err ) {
+        logger.error( err );
+      } else {
+        logger.info( res );
+      }
+      
+      posted();
+    });
   });
 }
    
