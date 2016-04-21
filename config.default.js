@@ -7,6 +7,7 @@ var config = {}
 
 // Application Information
 config.app = {}
+config.app.data = __dirname + '/pulls.txt';
 config.app.interval = 30000;
 config.app.mode = {}
 config.app.mode.DEVELOPMENT = 'development';
