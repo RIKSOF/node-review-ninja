@@ -110,6 +110,17 @@ checker = {
       // No comment on this line
       callback( comment );
     }
+  },
+  
+  /**
+   * This event indicates the current pull request diff is completed.
+   * It gives checker the opportunity to make a comment to the full
+   * diff.
+   * 
+   * @param callback    Once processing is done.
+   */
+  done: function( callback ) {
+    callback( '' );
   } 
 }
 

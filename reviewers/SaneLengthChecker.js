@@ -1,17 +1,21 @@
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
- * Tabs Checker
+ * Sane Length Checker
  */
 
 checker = {
-  issuesFound: false,
+  lineChangeLimit: 500,
+  fileLineLimit: 1000,
+  linesCount: 0,
+  fileNames: '',
   
   /**
    * Function is used to reset the checker for next pull review.
    */
   reset: function(  ) {
-    checker.issuesFound = false;
+    checker.linesCount = 0;
+    checker.fileNames = '';
   },
   
   /**
@@ -22,7 +26,7 @@ checker = {
   */
   doesValidate: function( file ) {
     var validates = true;
-    var excluded = [ '.pbxproj', '.xib' ];
+    var excluded = [ '.html', '.xib' ];
     
     excluded.forEach( function( e ) {
       if ( file.substr( -e.length) === e ) {
@@ -42,17 +46,20 @@ checker = {
    * @param callback    Once processing is done.
    */
   step: function( change, path, position, callback ) {
-    var findTabs = /(\t+)/g;
     var comment = '';
     
-    // This checker only worries about changes that were added.
-    if ( change.add ) {
-      var match = findTabs.exec( change.content );
+    // We will count the lines added and removed.
+    if ( change.add || change.del ) {
+      checker.linesCount++;
+    }
     
-      if ( (( match ) ? match[ 0 ].length : 0) > 0 ) {
-        comment = 'Use spaces instead of tabs.';
-        checker.issuesFound = true;
-      }
+    // If a file has gone beyond the line limit
+    if ( change.ln > checker.fileLineLimit ||
+         change.ln1 > checker.fileLineLimit ||
+         change.ln2 > checker.fileLineLimit ) {
+      if ( checker.fileNames.indexOf( path ) < 0 ) {
+        checker.fileNames += path + ' ';
+      } 
     }
     
     callback( comment );
@@ -66,9 +73,19 @@ checker = {
    * @param callback    Once processing is done.
    */
   done: function( callback ) {
-    var comment = ( checker.issuesFound ) ? 'Please do not merge till tabs are removed.' : '';
+    var comment = '';
+    
+    if ( checker.linesCount > checker.lineChangeLimit ) {
+      comment += 'Please reduce the number of changes in this pull request by breaking it down. ';
+    }
+    
+    if ( checker.fileNames != '' ) {
+      comment += 'Please reduce the number of lines in these files, by breaking them down: ' 
+        + checker.fileNames;
+    }
+    
     callback( comment );
-  } 
+  }
 }
 
 // Make the module available to all

@@ -27,42 +27,53 @@ function start() {
   reviewer.getRepositories( org, function( repos ) {
       
     // Once all the repositories are polled
-    var doneWithRepo = _.after( repos.length, function() {
-      pulls.list = allNewPulls;
-      pulls.save();
+    if ( repos != null && repos.length > 0 ) {
+      var doneWithRepo = _.after( repos.length, function() {
+        pulls.list = allNewPulls;
+        pulls.save();
         
-      logger.info( 'Done with searching, for now...' );
+        logger.info( 'Done with searching, for now...' );
       
-      setTimeout( start, config.app.interval );
-    });
-    
-    // For each repository, get the pull requests
-    repos.forEach( function( r ) {
-      reviewer.getAllPulls( org, r.name, function( ps ) {
-          
-        // Calculate the pulls that need to be reviewed.
-        var updatedPs = pulls.update( ps );
-          
-        // Once all the pull for this repository are polled.
-        if ( updatedPs.length > 0 ) {
-          var doneWithPulls = _.after( updatedPs.length, function() {
-            doneWithRepo();
-          });
-          
-          updatedPs.forEach( function( p ) {
-            reviewer.getPullRequestDetails( p.html_url, function( details ) {
-              reviewer.review( p.html_url, p.head.sha, function( fail ) {
-                doneWithPulls();
-              });
-            });
-          });
-        } else {
-          doneWithRepo();
-        }
-        
-        allNewPulls = allNewPulls.concat( ps );
+        setTimeout( start, config.app.interval );
       });
-    });
+    
+      // For each repository, get the pull requests
+      repos.forEach( function( r ) {
+        reviewer.getAllPulls( org, r.name, function( ps ) {
+          
+          // Calculate the pulls that need to be reviewed.
+          if ( ps != null && ps.length > 0 ) {
+            var updatedPs = pulls.update( ps );
+          
+            // Once all the pull for this repository are polled.
+            if ( updatedPs.length > 0 ) {
+              var doneWithPulls = _.after( updatedPs.length, function() {
+                doneWithRepo();
+              });
+          
+              updatedPs.forEach( function( p ) {
+                logger.info( 'Reviewing: ' + p.html_url );
+                
+                reviewer.getPullRequestDetails( p.html_url, function( details ) {
+                  reviewer.review( p.html_url, p.head.sha, function( fail ) {
+                    doneWithPulls();
+                  });
+                });
+              });
+            } else {
+              doneWithRepo();
+            }
+        
+            allNewPulls = allNewPulls.concat( ps );
+          } else {
+            doneWithRepo();
+          }
+        });
+      });
+    } else {
+      setTimeout( start, config.app.interval );
+    }
+    
   });
 }
 

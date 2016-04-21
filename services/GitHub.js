@@ -118,6 +118,25 @@ github.commentOnPull = function ( u, comment, callback ) {
 }
 
 /**
+ * Comment on an issue.
+ *
+ * @param u        URL for the issue.
+ * @param comment  Comment
+ * @param callback Once the request completes.
+ */
+github.commentOnIssue = function ( u, comment, callback ) {
+  var url = require('url');
+  var decoded = url.parse( u );
+  var values = decoded.path.split( '/' );
+  
+  comment.user = values[1];
+  comment.repo = values[2];
+  comment.number = values[4];
+  
+  github.api.issues.createComment( comment, callback );
+}
+
+/**
  * Get repositories
  *
  * @param org       Organization.

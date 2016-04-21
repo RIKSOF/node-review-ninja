@@ -6,12 +6,6 @@
 
 reviewer = {}
 
-// Checkers
-var checkers = [
-  require( __dirname + '/../reviewers/TabsChecker' ),
-  require( __dirname + '/../reviewers/GrammarChecker' ),
-]
-
 // Get the configurations
 var config = require( __dirname + '/../config' );
 
@@ -37,6 +31,13 @@ reviewer.review = function ( url, commit_id, callback ) {
   // Diff service
   var parse = require('parse-diff');
   
+  // Checkers
+  var checkers = [
+    require( __dirname + '/../reviewers/TabsChecker' ),
+    require( __dirname + '/../reviewers/GrammarChecker' ),
+    require( __dirname + '/../reviewers/SaneLengthChecker' )
+  ]
+  
   github.getDiff( url, function(err, res) {
     if ( err ) {
       logger.error( err );
@@ -49,8 +50,37 @@ reviewer.review = function ( url, commit_id, callback ) {
       
       // Parse through all changes in the diff.
       var files = parse( res );
+      
+      // All files are prcessed. This implies the pull request
+      // has been fully reviewed. We will now let all the
+      // validators know. Some checkers will spend significant
+      // time completing this. So we wait for them to complete.
       var fileProcessed = _.after( files.length, function() {
-        callback();
+        var pullLevelComments = 'I have reviewed this request. Reviewer must review my comments. ';
+        
+        var allDone = _.after( checkers.length, function() {
+          // Make one comment for the whole pull request.
+          if( pullLevelComments != '' ) {
+            var comments = {
+              body: pullLevelComments
+            };
+            
+            reviewer.commentOnIssue( url, comments, function() {
+            });
+          }
+          callback();
+        });
+        
+        // Do final checks for this pull request.
+        checkers.forEach( function( c ) {
+          c.done( function( body ) {
+            if ( body != '' ) {
+              pullLevelComments += body + ' ';
+            }
+            
+            allDone();
+          });
+        });
       });
       
       files.forEach( function( file ) {
@@ -183,12 +213,26 @@ reviewer.comment = function ( url, comments, callback ) {
     github.commentOnPull( url, c, function(err, res) {
       if ( err ) {
         logger.error( err );
-      } else {
-        logger.info( res );
       }
-      
+
       posted();
     });
+  });
+}
+
+/**
+ * Post comments to the whole pull request
+ *
+ * @param url       URL for pull request.
+ * @param comment   Single comment
+ * @param callback  Callback once comments are posted.
+ */
+reviewer.commentOnIssue = function ( url, comment, callback ) {
+  github.commentOnIssue( url, comment, function(err, res) {
+    if ( err ) {
+      logger.error( err );
+    }
+    callback();
   });
 }
    
