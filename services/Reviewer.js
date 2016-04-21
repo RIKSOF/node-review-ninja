@@ -50,7 +50,7 @@ reviewer.review = function ( url, commit_id, callback ) {
       // Parse through all changes in the diff.
       var files = parse( res );
       var fileProcessed = _.after( files.length, function() {
-        callback( true );
+        callback();
       });
       
       files.forEach( function( file ) {

@@ -112,7 +112,6 @@ pulls.load = function( callback ) {
       logger.error( 'Error: ' + err );
     } else {
       pulls.list = JSON.parse( data );
-      //pulls.list[ p.html_url ]
     }
     
     callback();
