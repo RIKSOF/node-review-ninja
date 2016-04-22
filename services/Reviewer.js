@@ -308,7 +308,6 @@ reviewer.comment = function ( url, comments, callback ) {
   });
   
   comments.forEach( function( c ) {
-    console.log( JSON.stringify( c ) );
     github.commentOnPull( url, c, function(err, res) {
       if ( err ) {
         logger.error( err );

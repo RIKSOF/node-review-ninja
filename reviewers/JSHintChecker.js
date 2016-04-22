@@ -81,11 +81,12 @@ checker = {
     if ( change.add ) {
       checker.lintedFiles.forEach( function ( f ) {
         if ( f.file === path ) {
-          f.errors.head.forEach( function ( e ) {
-            if ( e.line === change.ln ) {
-              comment += e.reason + ' ';
+          for ( i = 0; i < f.errors.head.length; i++ ) {
+            if ( f.errors.head[i].line === change.ln ) {
+              comment += f.errors.head[i].reason + ' ';
+              f.errors.head[i].reported = true;
             }
-          });
+          }
         }
       });
     }
@@ -102,6 +103,75 @@ checker = {
    */
   done: function( callback ) {
     var comment = '';
+    
+    // Look through all changed files and ensure that we 
+    // have not added more errors in this pull. 
+    checker.lintedFiles.forEach( function ( f ) {
+      
+      // We are only interested if the head branch still has
+      // lint issues.
+      if ( f.errors.head.length > 0 ) {
+        baseIndex = 0;
+        headIndex = 0;
+      
+        // Keep searching till we get to the end of the issues
+        // on head branch.
+        while ( f.errors.head !== null && headIndex < f.errors.head.length ) {
+          // Make sure the current head error is not a null
+          if ( f.errors.head[ headIndex] == null ) {
+            headIndex++;
+            continue;
+          }
+          
+          // If we still have issues to look at on the base branch.
+          if ( f.errors.base !== null && baseIndex < f.errors.base.length ) {
+            
+            // Make sure the current base error is not a null
+            if ( f.errors.base[ baseIndex] == null ) {
+              baseIndex++;
+              continue;
+            }
+            
+            // If this error is in both branches. 
+            if ( f.errors.base[ baseIndex ].line ===
+                 f.errors.head[ headIndex ].line ) {
+              
+              // Ignore this line.
+              baseIndex++;
+              headIndex++;     
+            } else if ( f.errors.base[ baseIndex ].line < 
+              f.errors.head[ headIndex ].line ) {
+              // Go to the next error as this error has
+              // been removed from the head branch.
+              baseIndex++;
+            } else {
+              // All these comments are not in the base branch, so they
+              // are additional comments. Need to make sure we did not
+              // report them in the line by line review.
+              if ( !f.errors.head[headIndex].reported ) {
+                comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' 
+                  + f.errors.head[ headIndex ].reason + ' ';
+              
+              }
+              
+              headIndex++;
+            }
+          } else {
+            // All these comments are not in the base branch, so they
+            // are additional comments. Need to make sure we did not
+            // report them in the line by line review.
+            if ( !f.errors.head[headIndex].reported ) {
+              comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' 
+                + f.errors.head[ headIndex ].reason + ' ';
+            
+            }
+            
+            headIndex++;
+          }
+        }
+      }
+    });
+    
     callback( comment );
   }
 }
