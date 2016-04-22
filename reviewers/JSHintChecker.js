@@ -5,17 +5,13 @@
  */
 
 checker = {
-  sourceFiles: [],
-  sourceId: '',
-  destinationId: '',
+  lintedFiles: [],
   
   /**
    * Function is used to reset the checker for next pull review.
    */
   reset: function(  ) {
-    checker.sourceFiles = [];
-    checker.sourceId = '';
-    checker.destinationId = '';
+    checker.lintedFiles = [];
   },
   
   /**
@@ -33,9 +29,41 @@ checker = {
         validates = true;
       }
     });
+
+    return validates;
+  },
+  
+  /**
+   * Process a new file both it current and proposed version.
+   *
+   * @param from        Path of the base file.
+   * @param baseSource  Content of the base source file.
+   * @param to          Path of the head file.
+   * @param headSource  Content of the head source file.
+   */
+  start: function( from, baseSource, to, headSource ) {
+    var jshint = require( 'jshint' );
+    var errors = {};
+    var data = {};
     
-    return false;
-    //return validates;
+    // Lint the base source.
+    jshint.JSHINT( baseSource );
+    errors.base = jshint.JSHINT.errors;
+    data.base = jshint.JSHINT.data();
+    
+    // Lint the head source.
+    jshint.JSHINT( headSource );
+    errors.base = jshint.JSHINT.errors;
+    data.base = jshint.JSHINT.data();
+    
+    // Remember this report.
+    var report = {
+      file: to,
+      errors: errors,
+      data: data
+    }
+    
+    checker.lintedFiles.push( report );
   },
   
   /**
@@ -48,6 +76,20 @@ checker = {
    */
   step: function( change, path, position, callback ) {
     var comment = '';
+    
+    // On the line, only report on changes that were made.
+    if ( change.add ) {
+      checker.lintedFiles.forEach( function ( f ) {
+        if ( f.file === path ) {
+          f.errors.head.forEach( function ( e ) {
+            if ( e.line === change.ln ) {
+              comment += e.reason + ' ';
+            }
+          });
+        }
+      });
+    }
+    
     callback( comment );
   },
   
@@ -60,7 +102,6 @@ checker = {
    */
   done: function( callback ) {
     var comment = '';
-    
     callback( comment );
   }
 }

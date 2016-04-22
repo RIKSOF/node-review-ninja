@@ -38,6 +38,17 @@ checker = {
   },
   
   /**
+   * Process a new file both it current and proposed version.
+   *
+   * @param from        Path of the base file.
+   * @param baseSource  Content of the base source file.
+   * @param to          Path of the head file.
+   * @param headSource  Content of the head source file.
+   */
+  start: function( from, baseSource, to, headSource ) {
+  },
+  
+  /**
    * Processes a step in the diff file.
    * 
    * @param change      Line being read

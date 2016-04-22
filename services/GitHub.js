@@ -180,5 +180,33 @@ github.getAllPulls = function ( org, repo, callback ) {
   });
 }
 
+/**
+ * Get content of a file.
+ *
+ * @param u           URL of pull request
+ * @param path        Path to file
+ * @param commit_id   ID of commit
+ */
+github.getContent = function( u, path, commit_id, callback ) {
+  // Our logger for logging to file and console
+  var logger = require( __dirname + '/../services/Logger' );
+  var url = require('url');
+  var decoded = url.parse( u );
+  var values = decoded.path.split( '/' );
+  
+  github.api.repos.getContent({
+    user: values[1],
+    repo: values[2],
+    path: path,
+    ref: commit_id
+  }, function( err, res ) {
+    if ( err ) {
+      logger.error( err );
+    }
+   
+    callback( eval( res ) );
+  });
+};
+
 // Make the module available to all
 module.exports = github;

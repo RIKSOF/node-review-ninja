@@ -50,9 +50,7 @@ reviewer.review = function ( url, commit_id, callback ) {
       // Step 2: Parse through all changes in the diff.
       var files = parse( res );
       
-      // Step 3: Send the based and head files to all the checkers (TODO).
-      
-      // Step 4: Go through the files and check differences in each
+      // Step 3: Go through the files and check differences in each
       // All files are prcessed. This implies the pull request
       // has been fully reviewed. We will now let all the
       // validators know. Some checkers will spend significant
@@ -67,6 +65,45 @@ reviewer.review = function ( url, commit_id, callback ) {
     }
   });
 };
+
+/**
+ * Start reviewing file.
+ *
+ * @param url             URL of the pull request.
+ * @param validators      Array of validators for this file.
+ * @param file            File to be reviewed.
+ * @param base_id         Commit id for base branch.
+ * @param head_id         Commit id for the head branch.
+ * @param fileProcessed   Callback that is invoked when we complete
+ *                        processing a file.
+ */
+reviewer.startReviewingFile = function( url, validators, file, base_id, head_id, fileProcessed ) {
+  var baseSource = '';
+  var headSource = '';
+  
+  var filesDownloaded = _.after( 2, function() {
+    validators.forEach( function( v ) {
+      v.start( file.from, baseSource, file.to, headSource );
+    });
+    
+    // We are done processing.
+    fileProcessed();
+  });
+  
+  // Get the source for base commit.
+  github.getContent( url, file.from, base_id, function( res ) {
+    var buf = new Buffer( res.content, 'base64').toString("ascii");
+    baseSource = buf;
+    filesDownloaded();
+  });
+  
+  // Get the source for head commit
+  github.getContent( url, file.to, head_id, function( res ) {
+    var buf = new Buffer( res.content, 'base64').toString("ascii");
+    headSource = buf;
+    filesDownloaded();
+  });
+};      
 
 /**
  * Review a single file.
@@ -90,6 +127,8 @@ reviewer.reviewFile = function( url, checkers, file, commit_id, fileProcessed ) 
       validators.push( c );
     }
   });
+  
+  // Download the version of this file from base and head branches.
   
   // Track when all chunks are processed.
   var chunkProcessed = _.after( file.chunks.length, function() {
