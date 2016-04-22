@@ -10,6 +10,7 @@ config.app = {}
 config.app.data = __dirname + '/pulls.txt';
 config.app.interval = 60000;
 config.app.mode = {}
+config.app.mode.TESTING = 'testing';
 config.app.mode.DEVELOPMENT = 'development';
 config.app.mode.PRODUCTION = 'production';
 config.app.mode.current = config.app.mode.DEVELOPMENT;

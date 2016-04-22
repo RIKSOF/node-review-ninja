@@ -79,10 +79,17 @@ function start() {
 
 // Setup the directories if they are not there. This is done just once.
 logger.setupDirectory();
-logger.info( 'Review Ninja is up and kicking...' );
 
-// Pulls request model
-var pulls = require( __dirname + '/models/Pulls');
-pulls.load( function() {
-  start();
-});
+if ( config.app.mode.current != config.app.mode.TESTING ) {
+  logger.info( 'Review Ninja is up and kicking...(' + config.app.mode.current + ')' );
+  
+  // Pulls request model
+  var pulls = require( __dirname + '/models/Pulls');
+  pulls.load( function() {
+    start();
+  });
+} else {
+  logger.info( 'Review Ninja is in testing mode...' );
+  
+  
+}

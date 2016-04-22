@@ -35,7 +35,8 @@ reviewer.review = function ( url, commit_id, callback ) {
   var checkers = [
     require( __dirname + '/../reviewers/TabsChecker' ),
     require( __dirname + '/../reviewers/GrammarChecker' ),
-    require( __dirname + '/../reviewers/SaneLengthChecker' )
+    require( __dirname + '/../reviewers/SaneLengthChecker' ),
+    require( __dirname + '/../reviewers/JSHintChecker' )
   ]
   
   github.getDiff( url, function(err, res) {

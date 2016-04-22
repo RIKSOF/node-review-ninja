@@ -9,6 +9,7 @@
     "github": "0.2.4",
     "parse-diff": "0.3.2",
     "gingerbread": "0.5.0",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "jshint": "2.9.2"
 	}
 }
