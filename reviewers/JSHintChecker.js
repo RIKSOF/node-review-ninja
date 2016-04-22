@@ -118,7 +118,7 @@ checker = {
         // on head branch.
         while ( f.errors.head !== null && headIndex < f.errors.head.length ) {
           // Make sure the current head error is not a null
-          if ( f.errors.head[ headIndex] == null ) {
+          if ( f.errors.head[ headIndex] === null ) {
             headIndex++;
             continue;
           }
@@ -133,14 +133,12 @@ checker = {
             }
             
             // If this error is in both branches. 
-            if ( f.errors.base[ baseIndex ].line ===
-                 f.errors.head[ headIndex ].line ) {
+            if ( f.errors.base[ baseIndex ].line === f.errors.head[ headIndex ].line ) {
               
               // Ignore this line.
               baseIndex++;
               headIndex++;     
-            } else if ( f.errors.base[ baseIndex ].line < 
-              f.errors.head[ headIndex ].line ) {
+            } else if ( f.errors.base[ baseIndex ].line < f.errors.head[ headIndex ].line ) {
               // Go to the next error as this error has
               // been removed from the head branch.
               baseIndex++;
@@ -149,9 +147,7 @@ checker = {
               // are additional comments. Need to make sure we did not
               // report them in the line by line review.
               if ( !f.errors.head[headIndex].reported ) {
-                comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' 
-                  + f.errors.head[ headIndex ].reason + ' ';
-              
+                comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
               }
               
               headIndex++;
@@ -161,8 +157,7 @@ checker = {
             // are additional comments. Need to make sure we did not
             // report them in the line by line review.
             if ( !f.errors.head[headIndex].reported ) {
-              comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' 
-                + f.errors.head[ headIndex ].reason + ' ';
+              comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
             
             }
             

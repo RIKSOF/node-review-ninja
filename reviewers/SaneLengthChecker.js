@@ -90,14 +90,13 @@ checker = {
       comment += 'Please reduce the number of changes in this pull request by breaking it down. ';
     }
     
-    if ( checker.fileNames != '' ) {
-      comment += 'Please reduce the number of lines in these files, by breaking them down: ' 
-        + checker.fileNames;
+    if ( checker.fileNames !== '' ) {
+      comment += 'Please reduce the number of lines in these files, by breaking them down: ' + checker.fileNames;
     }
     
     callback( comment );
   }
-}
+};
 
 // Make the module available to all
 module.exports = checker;
