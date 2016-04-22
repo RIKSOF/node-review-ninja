@@ -24,9 +24,10 @@ var _ = require( 'underscore' );
  *
  * @param url       Pull request URL.
  * @param commit_id Commit id
+ * @param base_id   Commit id for base branch.
  * @param callback  Callback once reviewed.
  */
-reviewer.review = function ( url, commit_id, callback ) {
+reviewer.review = function ( url, commit_id, base_id, callback ) {
   
   // Diff service
   var parse = require('parse-diff');
@@ -60,7 +61,7 @@ reviewer.review = function ( url, commit_id, callback ) {
       });
       
       files.forEach( function( file ) {
-        reviewer.reviewFile( url, checkers, file, commit_id, fileProcessed );
+        reviewer.reviewFile( url, checkers, file, commit_id, base_id, fileProcessed );
       });
     }
   });
@@ -72,12 +73,12 @@ reviewer.review = function ( url, commit_id, callback ) {
  * @param url             URL of the pull request.
  * @param validators      Array of validators for this file.
  * @param file            File to be reviewed.
- * @param base_id         Commit id for base branch.
  * @param head_id         Commit id for the head branch.
+ * @param base_id         Commit id for base branch.
  * @param fileProcessed   Callback that is invoked when we complete
  *                        processing a file.
  */
-reviewer.startReviewingFile = function( url, validators, file, base_id, head_id, fileProcessed ) {
+reviewer.startReviewingFile = function( url, validators, file, head_id, base_id,  fileProcessed ) {
   var baseSource = '';
   var headSource = '';
   
@@ -112,10 +113,11 @@ reviewer.startReviewingFile = function( url, validators, file, base_id, head_id,
  * @param checkers        Array of checkers.
  * @param file            File to be reviewed.
  * @param commit_id       Commit ID
+ * @param base_commit_id  Base Commit ID
  * @param fileProcessed   Callback that is invoked when we complete
  *                        processing a file.
  */
-reviewer.reviewFile = function( url, checkers, file, commit_id, fileProcessed ) {
+reviewer.reviewFile = function( url, checkers, file, commit_id, base_commit_id, fileProcessed ) {
   // Name of the new file. Refresh the position.
   var path = file.to;
   var position = 0;
@@ -128,8 +130,6 @@ reviewer.reviewFile = function( url, checkers, file, commit_id, fileProcessed ) 
     }
   });
   
-  // Download the version of this file from base and head branches.
-  
   // Track when all chunks are processed.
   var chunkProcessed = _.after( file.chunks.length, function() {
     fileProcessed();
@@ -137,10 +137,15 @@ reviewer.reviewFile = function( url, checkers, file, commit_id, fileProcessed ) 
 
   // Go through all chunks in the new file.
   if ( file.chunks.length > 0 ) {
-    file.chunks.forEach( function( chunk ) {
-      position = reviewer.reviewChunk( url, validators, chunk, commit_id, path, 
-        position, chunkProcessed );
+    
+    // Download the version of this file from base and head branches.
+    reviewer.startReviewingFile( url, validators, file, commit_id, base_commit_id, function() {
+      file.chunks.forEach( function( chunk ) {
+        position = reviewer.reviewChunk( url, validators, chunk, commit_id, path, 
+          position, chunkProcessed );
+      });
     });
+    
   } else {
     fileProcessed();
   }
@@ -303,6 +308,7 @@ reviewer.comment = function ( url, comments, callback ) {
   });
   
   comments.forEach( function( c ) {
+    console.log( JSON.stringify( c ) );
     github.commentOnPull( url, c, function(err, res) {
       if ( err ) {
         logger.error( err );
