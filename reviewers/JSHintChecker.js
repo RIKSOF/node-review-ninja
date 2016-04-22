@@ -53,15 +53,15 @@ checker = {
     
     // Lint the head source.
     jshint.JSHINT( headSource );
-    errors.base = jshint.JSHINT.errors;
-    data.base = jshint.JSHINT.data();
+    errors.head = jshint.JSHINT.errors;
+    data.head = jshint.JSHINT.data();
     
     // Remember this report.
     var report = {
       file: to,
       errors: errors,
       data: data
-    }
+    };
     
     checker.lintedFiles.push( report );
   },
