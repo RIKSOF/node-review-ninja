@@ -171,9 +171,7 @@ reviewer.reviewChunk = function( url, validators, chunk, commit_id, path, positi
     chunkProcessed();
   });
 
-  for ( i = 0; i < chunk.changes.length; i++ ) {
-    var change = chunk.changes[i];
-
+  chunk.changes.forEach( function( change ) {
     // Each line that is normal or added is counted
     position++;
     
@@ -210,7 +208,7 @@ reviewer.reviewChunk = function( url, validators, chunk, commit_id, path, positi
       }
     
     }) ( change, path, position, commit_id );
-  }
+  });
   
   return position;
 };
