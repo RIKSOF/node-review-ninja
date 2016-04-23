@@ -83,10 +83,11 @@ checker = {
         if ( f.file === path ) {
           for ( i = 0; i < f.errors.head.length; i++ ) {
             if ( f.errors.head[i].line === change.ln ) {
-              console.log( 'Diff: ' + change.content );
-              console.log( 'Lint: ' + f.errors.head[i].reason )
-              //comment += f.errors.head[i].reason + ' ';
-              //f.errors.head[i].reported = true;
+              //console.log( 'Position: ' + )
+              //console.log( 'Diff: ' + change.content );
+              //console.log( 'Lint: ' + f.errors.head[i].reason )
+              comment += f.errors.head[i].reason + ' ';
+              f.errors.head[i].reported = true;
             }
           }
         }
@@ -169,7 +170,7 @@ checker = {
       }
     });
     
-    comment = '';
+    //comment = '';
     
     callback( comment );
   }
