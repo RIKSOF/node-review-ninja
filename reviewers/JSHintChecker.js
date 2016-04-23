@@ -109,8 +109,9 @@ checker = {
     var comment = '';
     
     // Look through all changed files and ensure that we 
-    // have not added more errors in this pull. 
-    checker.lintedFiles.forEach( function ( f ) {
+    // have not added more errors in this pull.
+    for ( i = 0; i < checker.lintedFiles.length; i++ ) {
+      f = checker.lintedFiles[i];
       
       // We are only interested if the head branch still has
       // lint issues.
@@ -169,9 +170,7 @@ checker = {
           }
         }
       }
-    });
-    
-    //comment = '';
+    }
     
     callback( comment );
   }
