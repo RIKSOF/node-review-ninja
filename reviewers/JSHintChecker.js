@@ -79,7 +79,8 @@ checker = {
     
     // On the line, only report on changes that were made.
     if ( change.add ) {
-      checker.lintedFiles.forEach( function ( f ) {
+      for ( j = 0; j < checker.lintedFiles.length; j++ ) {
+        var f = checker.lintedFiles[j]; 
         if ( f.file === path ) {
           for ( i = 0; i < f.errors.head.length; i++ ) {
             if ( f.errors.head[i].line === change.ln ) {
@@ -91,7 +92,7 @@ checker = {
             }
           }
         }
-      });
+      }
     }
     
     callback( comment );
