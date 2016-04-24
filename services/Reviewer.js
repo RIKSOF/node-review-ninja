@@ -19,6 +19,14 @@ github.setup( config.github.personalToken );
 // Underscore library
 var _ = require( 'underscore' );
 
+// Checkers
+var ninjas = [
+  require( __dirname + '/../reviewers/TabsChecker' ),
+  require( __dirname + '/../reviewers/GrammarChecker' ),
+  require( __dirname + '/../reviewers/SaneLengthChecker' ),
+  require( __dirname + '/../reviewers/JSHintChecker' )
+];
+
 /**
  * Perform review of a pull request!
  *
@@ -32,18 +40,16 @@ reviewer.review = function ( url, commit_id, base_id, callback ) {
   // Diff service
   var parse = require('parse-diff');
   
-  // Checkers
-  var checkers = [
-    require( __dirname + '/../reviewers/TabsChecker' ),
-    require( __dirname + '/../reviewers/GrammarChecker' ),
-    require( __dirname + '/../reviewers/SaneLengthChecker' ),
-    require( __dirname + '/../reviewers/JSHintChecker' )
-  ];
-  
   github.getDiff( url, function(err, res) {
     if ( err ) {
       logger.error( err );
     } else {
+      
+      // Initialize all the checkers.
+      var checkers = [];
+      for ( i = 0; i < ninjas.length; i++ ) {
+        checkers.push( new ninjas[i]() );
+      }
       
       // Step 1: Reset all checkers
       reviewer.resetCheckers( checkers );
@@ -93,15 +99,25 @@ reviewer.startReviewingFile = function( url, validators, file, head_id, base_id,
   
   // Get the source for base commit.
   github.getContent( url, file.from, base_id, function( res ) {
-    var buf = new Buffer( res.content, 'base64').toString("ascii");
-    baseSource = buf;
+    
+    // Some files will not exist in the base commit.
+    if ( res && res.content ) {
+      var buf = new Buffer( res.content, 'base64').toString("ascii");
+      baseSource = buf;
+    }
+    
     filesDownloaded();
   });
   
   // Get the source for head commit
   github.getContent( url, file.to, head_id, function( res ) {
-    var buf = new Buffer( res.content, 'base64').toString("ascii");
-    headSource = buf;
+    
+    // Some files will not exist in the head commit.
+    if ( res && res.content ) {
+      var buf = new Buffer( res.content, 'base64').toString("ascii");
+      headSource = buf;
+    }
+    
     filesDownloaded();
   });
 };      

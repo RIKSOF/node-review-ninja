@@ -4,7 +4,10 @@
  * Sane Length Checker
  */
 
-checker = {
+checker = function () {
+}
+
+checker.prototype = {
   lineChangeLimit: 500,
   fileLineLimit: 1000,
   linesCount: 0,
@@ -14,8 +17,8 @@ checker = {
    * Function is used to reset the checker for next pull review.
    */
   reset: function(  ) {
-    checker.linesCount = 0;
-    checker.fileNames = '';
+    this.linesCount = 0;
+    this.fileNames = '';
   },
   
   /**
@@ -61,15 +64,15 @@ checker = {
     
     // We will count the lines added and removed.
     if ( change.add || change.del ) {
-      checker.linesCount++;
+      this.linesCount++;
     }
     
     // If a file has gone beyond the line limit
-    if ( change.ln > checker.fileLineLimit ||
-         change.ln1 > checker.fileLineLimit ||
-         change.ln2 > checker.fileLineLimit ) {
-      if ( checker.fileNames.indexOf( path ) < 0 ) {
-        checker.fileNames += path + ' ';
+    if ( change.ln > this.fileLineLimit ||
+         change.ln1 > this.fileLineLimit ||
+         change.ln2 > this.fileLineLimit ) {
+      if ( this.fileNames.indexOf( path ) < 0 ) {
+        this.fileNames += path + ' ';
       } 
     }
     
@@ -86,12 +89,12 @@ checker = {
   done: function( callback ) {
     var comment = '';
     
-    if ( checker.linesCount > checker.lineChangeLimit ) {
+    if ( this.linesCount > this.lineChangeLimit ) {
       comment += 'Please reduce the number of changes in this pull request by breaking it down. ';
     }
     
-    if ( checker.fileNames !== '' ) {
-      comment += 'Please reduce the number of lines in these files, by breaking them down: ' + checker.fileNames;
+    if ( this.fileNames !== '' ) {
+      comment += 'Please reduce the number of lines in these files, by breaking them down: ' + this.fileNames;
     }
     
     callback( comment );

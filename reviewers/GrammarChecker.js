@@ -7,7 +7,11 @@ String.prototype.splice = function( start, delCount, newSubStr ) {
   return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
 
-checker = {  
+checker = function () {
+}
+
+checker.prototype = {
+    
   /**
    * Function is used to reset the checker for next pull review.
    */

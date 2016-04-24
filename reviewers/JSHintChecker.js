@@ -4,14 +4,24 @@
  * JS Hint for linting.
  */
 
-checker = {
-  lintedFiles: [],
+checker = function () {
+  
+  /**
+   * Array of file paths.
+   */
+  this.lintedFiles = [];
+}
+
+/**
+ * Instance methods.
+ */
+checker.prototype = {
   
   /**
    * Function is used to reset the checker for next pull review.
    */
   reset: function(  ) {
-    checker.lintedFiles = [];
+    this.lintedFiles = [];
   },
   
   /**
@@ -19,7 +29,7 @@ checker = {
    * file.
    *
    * @param file   Relative path of file.
-  */
+   */
   doesValidate: function( file ) {
     var validates = false;
     var included = [ '.js' ];
@@ -34,7 +44,7 @@ checker = {
   },
   
   /**
-   * Process a new file both it current and proposed version.
+   * Process a new file both its current and proposed version.
    *
    * @param from        Path of the base file.
    * @param baseSource  Content of the base source file.
@@ -63,7 +73,7 @@ checker = {
       data: data
     };
     
-    checker.lintedFiles.push( report );
+    this.lintedFiles.push( report );
   },
   
   /**
@@ -79,8 +89,8 @@ checker = {
     
     // On the line, only report on changes that were made.
     if ( change.add ) {
-      for ( j = 0; j < checker.lintedFiles.length; j++ ) {
-        var f = checker.lintedFiles[j]; 
+      for ( j = 0; j < this.lintedFiles.length; j++ ) {
+        var f = this.lintedFiles[j]; 
         if ( f.file === path ) {
           for ( i = 0; i < f.errors.head.length; i++ ) {
             if ( f.errors.head[i].line === change.ln ) {
@@ -107,8 +117,8 @@ checker = {
     
     // Look through all changed files and ensure that we 
     // have not added more errors in this pull.
-    for ( i = 0; i < checker.lintedFiles.length; i++ ) {
-      f = checker.lintedFiles[i];
+    for ( i = 0; i < this.lintedFiles.length; i++ ) {
+      f = this.lintedFiles[i];
       
       // We are only interested if the head branch still has
       // lint issues.
@@ -160,7 +170,6 @@ checker = {
             // report them in the line by line review.
             if ( !f.errors.head[headIndex].reported ) {
               comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
-            
             }
             
             headIndex++;
