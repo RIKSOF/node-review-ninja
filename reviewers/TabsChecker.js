@@ -80,7 +80,7 @@ checker.prototype = {
    * @param callback    Once processing is done.
    */
   done: function( callback ) {
-    var comment = ( this.issuesFound ) ? 'Please do not merge till tabs are removed.' : '';
+    var comment = ( this.issuesFound ) ? '\n**Please do not merge till tabs are removed. **' : '';
     callback( comment );
   } 
 }

@@ -90,11 +90,11 @@ checker.prototype = {
     var comment = '';
     
     if ( this.linesCount > this.lineChangeLimit ) {
-      comment += 'Please reduce the number of changes in this pull request by breaking it down. ';
+      comment += '\nPlease reduce the number of changes in this pull request by breaking it down. ';
     }
     
     if ( this.fileNames !== '' ) {
-      comment += 'Please reduce the number of lines in these files, by breaking them down: ' + this.fileNames;
+      comment += '\nPlease reduce the number of lines in these files, by breaking them down: *' + this.fileNames + '*';
     }
     
     callback( comment );

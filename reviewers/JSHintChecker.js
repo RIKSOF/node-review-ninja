@@ -159,7 +159,8 @@ checker.prototype = {
               // are additional comments. Need to make sure we did not
               // report them in the line by line review.
               if ( !f.errors.head[headIndex].reported ) {
-                comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
+                comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].reason + '*';
+                comment += '\n```javascript\n' + f.errors.head[headIndex].evidence + '\n```\n';
               }
               
               headIndex++;
@@ -169,7 +170,8 @@ checker.prototype = {
             // are additional comments. Need to make sure we did not
             // report them in the line by line review.
             if ( !f.errors.head[headIndex].reported ) {
-              comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
+              comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].reason + '*';
+              comment += '\n```javascript\n' + f.errors.head[headIndex].evidence + '\n```\n';
             }
             
             headIndex++;
