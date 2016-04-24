@@ -6,6 +6,8 @@
 
 commenter = {};
 
+var config = require( __dirname + '/../config' );
+
 // Our logger for logging to file and console
 var logger = require( __dirname + '/../services/Logger' );
 
