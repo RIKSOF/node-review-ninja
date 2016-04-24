@@ -11,12 +11,15 @@ var config = require( __dirname + '/config' );
 var logger = require( __dirname + '/services/Logger' );
 
 // Reviewer Service
-var reviewer = require( __dirname + '/services/Reviewer');
+var reviewer = require( __dirname + '/services/Reviewer' );
 
 function start() {
   
   // Underscore library
   var _ = require( 'underscore' );
+  
+  // Set the commenter
+  reviewer.commenter = require( __dirname + '/services/ConsoleCommenter' );
 
   logger.info( 'Searching for bad pull requests...' );
   
