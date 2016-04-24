@@ -100,7 +100,7 @@ checker.prototype = {
                   // Also ignore spaces for single words.
                   if ( allowCaseSensitive == false && c.text.toLowerCase() == c.correct.toLowerCase().replace(/ /g, '')) {
                   } else if ( c.correct != '' ) {
-                    comment += 'For ' + c.text + ' did you mean ' + c.correct + '? ';
+                    comment += 'For `' + c.text + '` did you mean `' + c.correct + '`? ';
                   }
                 });
               }

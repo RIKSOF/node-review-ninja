@@ -4,7 +4,9 @@
  * Reviewer service
  */
 
-reviewer = {};
+reviewer = {
+  commenter: null
+};
 
 // Get the configurations
 var config = require( __dirname + '/../config' );
@@ -33,6 +35,7 @@ var ninjas = [
  * @param url       Pull request URL.
  * @param commit_id Commit id
  * @param base_id   Commit id for base branch.
+ * @param commenter Commenter module for sending comments.
  * @param callback  Callback once reviewed.
  */
 reviewer.review = function ( url, commit_id, base_id, callback ) {
@@ -198,7 +201,7 @@ reviewer.reviewChunk = function( url, validators, chunk, commit_id, path, positi
         
         if ( comments.length > 0 ) {
           // Post these comments to git
-          reviewer.comment( url, comments, function() {} );
+          reviewer.commenter.comment( url, comments, function() {} );
         }
         
         linesProcessed();
@@ -260,7 +263,7 @@ reviewer.reviewCompleted = function( url, checkers, callback ) {
         body: pullLevelComments
       };
             
-      reviewer.commentOnIssue( url, comment, function() {});
+      reviewer.commenter.commentOnIssue( url, comment, function() {});
     }
     
     callback();
@@ -307,46 +310,6 @@ reviewer.getAllPulls = function( org, repo, callback ) {
  */
 reviewer.getPullRequestDetails = function ( url, callback ) {
   github.getPullRequestDetails( url, callback );
-};
-
-/**
- * Post comments to a pull request
- *
- * @param url       URL for pull request.
- * @param comments  Array of comments.
- * @param callback  Callback once comments are posted.
- */
-reviewer.comment = function ( url, comments, callback ) {
-  // Once all comments are posted.
-  var posted = _.after( comments.length, function() {
-    callback();
-  });
-  
-  comments.forEach( function( c ) {
-    github.commentOnPull( url, c, function(err, res) {
-      if ( err ) {
-        logger.error( err );
-      }
-
-      posted();
-    });
-  });
-};
-
-/**
- * Post comments to the whole pull request
- *
- * @param url       URL for pull request.
- * @param comment   Single comment
- * @param callback  Callback once comments are posted.
- */
-reviewer.commentOnIssue = function ( url, comment, callback ) {
-  github.commentOnIssue( url, comment, function(err, res) {
-    if ( err ) {
-      logger.error( err );
-    }
-    callback();
-  });
 };
    
 // Make the module available to all

@@ -93,7 +93,7 @@ checker.prototype = {
         var f = this.lintedFiles[j]; 
         if ( f.file === path ) {
           for ( i = 0; i < f.errors.head.length; i++ ) {
-            if ( f.errors.head[i].line === change.ln ) {
+            if ( f.errors.head[i] !== null && f.errors.head[i].line === change.ln ) {
               comment += f.errors.head[i].reason + '\n```javascript\n' + f.errors.head[i].evidence + '\n```\n';
               f.errors.head[i].reported = true;
             }
@@ -159,7 +159,8 @@ checker.prototype = {
               // are additional comments. Need to make sure we did not
               // report them in the line by line review.
               if ( !f.errors.head[headIndex].reported ) {
-                comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
+                comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].reason + '*';
+                comment += '\n```javascript\n' + f.errors.head[headIndex].evidence + '\n```\n';
               }
               
               headIndex++;
@@ -169,7 +170,8 @@ checker.prototype = {
             // are additional comments. Need to make sure we did not
             // report them in the line by line review.
             if ( !f.errors.head[headIndex].reported ) {
-              comment += f.file + '(' + f.errors.head[ headIndex ].line + '): ' + f.errors.head[ headIndex ].reason + ' ';
+              comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].reason + '*';
+              comment += '\n```javascript\n' + f.errors.head[headIndex].evidence + '\n```\n';
             }
             
             headIndex++;
@@ -180,7 +182,7 @@ checker.prototype = {
     
     callback( comment );
   }
-}
+};
 
 // Make the module available to all
 module.exports = checker;
