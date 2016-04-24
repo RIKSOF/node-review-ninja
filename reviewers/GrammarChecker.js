@@ -7,7 +7,11 @@ String.prototype.splice = function( start, delCount, newSubStr ) {
   return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
 
-checker = {  
+checker = function () {
+}
+
+checker.prototype = {
+    
   /**
    * Function is used to reset the checker for next pull review.
    */
@@ -31,6 +35,17 @@ checker = {
     });
     
     return validates;
+  },
+  
+  /**
+   * Process a new file both it current and proposed version.
+   *
+   * @param from        Path of the base file.
+   * @param baseSource  Content of the base source file.
+   * @param to          Path of the head file.
+   * @param headSource  Content of the head source file.
+   */
+  start: function( from, baseSource, to, headSource ) {
   },
   
   /**

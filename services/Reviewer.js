@@ -19,30 +19,37 @@ github.setup( config.github.personalToken );
 // Underscore library
 var _ = require( 'underscore' );
 
+// Checkers
+var ninjas = [
+  require( __dirname + '/../reviewers/TabsChecker' ),
+  require( __dirname + '/../reviewers/GrammarChecker' ),
+  require( __dirname + '/../reviewers/SaneLengthChecker' ),
+  require( __dirname + '/../reviewers/JSHintChecker' )
+];
+
 /**
  * Perform review of a pull request!
  *
  * @param url       Pull request URL.
  * @param commit_id Commit id
+ * @param base_id   Commit id for base branch.
  * @param callback  Callback once reviewed.
  */
-reviewer.review = function ( url, commit_id, callback ) {
+reviewer.review = function ( url, commit_id, base_id, callback ) {
   
   // Diff service
   var parse = require('parse-diff');
-  
-  // Checkers
-  var checkers = [
-    require( __dirname + '/../reviewers/TabsChecker' ),
-    require( __dirname + '/../reviewers/GrammarChecker' ),
-    require( __dirname + '/../reviewers/SaneLengthChecker' ),
-    require( __dirname + '/../reviewers/JSHintChecker' )
-  ];
   
   github.getDiff( url, function(err, res) {
     if ( err ) {
       logger.error( err );
     } else {
+      
+      // Initialize all the checkers.
+      var checkers = [];
+      for ( i = 0; i < ninjas.length; i++ ) {
+        checkers.push( new ninjas[i]() );
+      }
       
       // Step 1: Reset all checkers
       reviewer.resetCheckers( checkers );
@@ -50,9 +57,7 @@ reviewer.review = function ( url, commit_id, callback ) {
       // Step 2: Parse through all changes in the diff.
       var files = parse( res );
       
-      // Step 3: Send the based and head files to all the checkers (TODO).
-      
-      // Step 4: Go through the files and check differences in each
+      // Step 3: Go through the files and check differences in each
       // All files are prcessed. This implies the pull request
       // has been fully reviewed. We will now let all the
       // validators know. Some checkers will spend significant
@@ -62,11 +67,60 @@ reviewer.review = function ( url, commit_id, callback ) {
       });
       
       files.forEach( function( file ) {
-        reviewer.reviewFile( url, checkers, file, commit_id, fileProcessed );
+        reviewer.reviewFile( url, checkers, file, commit_id, base_id, fileProcessed );
       });
     }
   });
 };
+
+/**
+ * Start reviewing file.
+ *
+ * @param url             URL of the pull request.
+ * @param validators      Array of validators for this file.
+ * @param file            File to be reviewed.
+ * @param head_id         Commit id for the head branch.
+ * @param base_id         Commit id for base branch.
+ * @param fileProcessed   Callback that is invoked when we complete
+ *                        processing a file.
+ */
+reviewer.startReviewingFile = function( url, validators, file, head_id, base_id,  fileProcessed ) {
+  var baseSource = '';
+  var headSource = '';
+  
+  var filesDownloaded = _.after( 2, function() {
+    validators.forEach( function( v ) {
+      v.start( file.from, baseSource, file.to, headSource );
+    });
+    
+    // We are done processing.
+    fileProcessed();
+  });
+  
+  // Get the source for base commit.
+  github.getContent( url, file.from, base_id, function( res ) {
+    
+    // Some files will not exist in the base commit.
+    if ( res && res.content ) {
+      var buf = new Buffer( res.content, 'base64').toString("ascii");
+      baseSource = buf;
+    }
+    
+    filesDownloaded();
+  });
+  
+  // Get the source for head commit
+  github.getContent( url, file.to, head_id, function( res ) {
+    
+    // Some files will not exist in the head commit.
+    if ( res && res.content ) {
+      var buf = new Buffer( res.content, 'base64').toString("ascii");
+      headSource = buf;
+    }
+    
+    filesDownloaded();
+  });
+};      
 
 /**
  * Review a single file.
@@ -75,10 +129,11 @@ reviewer.review = function ( url, commit_id, callback ) {
  * @param checkers        Array of checkers.
  * @param file            File to be reviewed.
  * @param commit_id       Commit ID
+ * @param base_commit_id  Base Commit ID
  * @param fileProcessed   Callback that is invoked when we complete
  *                        processing a file.
  */
-reviewer.reviewFile = function( url, checkers, file, commit_id, fileProcessed ) {
+reviewer.reviewFile = function( url, checkers, file, commit_id, base_commit_id, fileProcessed ) {
   // Name of the new file. Refresh the position.
   var path = file.to;
   var position = 0;
@@ -98,10 +153,15 @@ reviewer.reviewFile = function( url, checkers, file, commit_id, fileProcessed ) 
 
   // Go through all chunks in the new file.
   if ( file.chunks.length > 0 ) {
-    file.chunks.forEach( function( chunk ) {
-      position = reviewer.reviewChunk( url, validators, chunk, commit_id, path, 
-        position, chunkProcessed );
+    
+    // Download the version of this file from base and head branches.
+    reviewer.startReviewingFile( url, validators, file, commit_id, base_commit_id, function() {
+      file.chunks.forEach( function( chunk ) {
+        position = reviewer.reviewChunk( url, validators, chunk, commit_id, path, 
+          position, chunkProcessed );
+      });
     });
+    
   } else {
     fileProcessed();
   }
@@ -128,7 +188,6 @@ reviewer.reviewChunk = function( url, validators, chunk, commit_id, path, positi
   });
 
   chunk.changes.forEach( function( change ) {
-
     // Each line that is normal or added is counted
     position++;
     

@@ -55,7 +55,7 @@ function start() {
                 logger.info( 'Reviewing: ' + p.html_url );
                 
                 reviewer.getPullRequestDetails( p.html_url, function( details ) {
-                  reviewer.review( p.html_url, p.head.sha, function( fail ) {
+                  reviewer.review( p.html_url, p.head.sha, p.base.sha, function( fail ) {
                     doneWithPulls();
                   });
                 });
@@ -91,5 +91,48 @@ if ( config.app.mode.current != config.app.mode.TESTING ) {
 } else {
   logger.info( 'Review Ninja is in testing mode...' );
   
+  // Diff service
+  var parse = require('parse-diff');
   
+  // Underscore library
+  var _ = require( 'underscore' );
+  
+  // Checkers
+  var checkers = [
+    require( __dirname + '/reviewers/JSHintChecker' )
+  ];
+  
+  // Setup git token.
+  var github = require( __dirname + '/services/GitHub' );
+  github.setup( config.github.personalToken );
+  
+  var url = 'https://github.com/RIKSOF/Cedar/pull/1063';
+  
+  github.getDiff( url, function(err, res) {
+    if ( err ) {
+      logger.error( err );
+    } else {
+      
+      // Step 2: Parse through all changes in the diff.
+      var files = parse( res );
+      
+      // Step 3: Go through the files and check differences in each
+      // All files are prcessed. This implies the pull request
+      // has been fully reviewed. We will now let all the
+      // validators know. Some checkers will spend significant
+      // time completing this. So we wait for them to complete.
+      var fileProcessed = _.after( files.length, function() {
+        checkers[0].done( function( comment ) {
+          logger.info('Done!');
+        });
+      });
+      
+      files.forEach( function( file ) {
+        reviewer.startReviewingFile( url, checkers, file, '5a0ec4f06ee074d1950af66ad76cb555a22c9c1c', '855019d61613c8cbe13183af6422cfae02638a01', function() {
+          fileProcessed();
+        });
+      });
+    }
+  });
+
 }

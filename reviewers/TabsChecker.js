@@ -4,14 +4,17 @@
  * Tabs Checker
  */
 
-checker = {
+checker = function() {
+}
+
+checker.prototype = {
   issuesFound: false,
   
   /**
    * Function is used to reset the checker for next pull review.
    */
   reset: function(  ) {
-    checker.issuesFound = false;
+    this.issuesFound = false;
   },
   
   /**
@@ -34,6 +37,17 @@ checker = {
   },
   
   /**
+   * Process a new file both it current and proposed version.
+   *
+   * @param from        Path of the base file.
+   * @param baseSource  Content of the base source file.
+   * @param to          Path of the head file.
+   * @param headSource  Content of the head source file.
+   */
+  start: function( from, baseSource, to, headSource ) {
+  },
+  
+  /**
    * Processes a step in the diff file.
    * 
    * @param change      Line being read
@@ -51,7 +65,7 @@ checker = {
     
       if ( (( match ) ? match[ 0 ].length : 0) > 0 ) {
         comment = 'Use spaces instead of tabs.';
-        checker.issuesFound = true;
+        this.issuesFound = true;
       }
     }
     
@@ -66,7 +80,7 @@ checker = {
    * @param callback    Once processing is done.
    */
   done: function( callback ) {
-    var comment = ( checker.issuesFound ) ? 'Please do not merge till tabs are removed.' : '';
+    var comment = ( this.issuesFound ) ? 'Please do not merge till tabs are removed.' : '';
     callback( comment );
   } 
 }
