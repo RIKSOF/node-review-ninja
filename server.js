@@ -30,7 +30,7 @@ function start() {
   reviewer.getRepositories( org, function( repos ) {
       
     // Once all the repositories are polled
-    if ( repos != null && repos.length > 0 ) {
+    if ( repos !== null && repos.length > 0 ) {
       var doneWithRepo = _.after( repos.length, function() {
         pulls.list = allNewPulls;
         pulls.save();
@@ -45,7 +45,7 @@ function start() {
         reviewer.getAllPulls( org, r.name, function( ps ) {
           
           // Calculate the pulls that need to be reviewed.
-          if ( ps != null && ps.length > 0 ) {
+          if ( ps !== null && ps.length > 0 ) {
             var updatedPs = pulls.update( ps );
           
             // Once all the pull for this repository are polled.
