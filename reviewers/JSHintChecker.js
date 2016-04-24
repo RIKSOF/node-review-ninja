@@ -93,7 +93,7 @@ checker.prototype = {
         var f = this.lintedFiles[j]; 
         if ( f.file === path ) {
           for ( i = 0; i < f.errors.head.length; i++ ) {
-            if ( f.errors.head[i].line === change.ln ) {
+            if ( f.errors.head[i] !== null && f.errors.head[i].line === change.ln ) {
               comment += f.errors.head[i].reason + '\n```javascript\n' + f.errors.head[i].evidence + '\n```\n';
               f.errors.head[i].reported = true;
             }
@@ -182,7 +182,7 @@ checker.prototype = {
     
     callback( comment );
   }
-}
+};
 
 // Make the module available to all
 module.exports = checker;
