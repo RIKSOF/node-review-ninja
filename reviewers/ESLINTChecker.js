@@ -214,7 +214,7 @@ checker.prototype = {
           if ( f.errors.base !== null && baseIndex < f.errors.base.length ) {
             
             // Make sure the current base error is not a null
-            if ( f.errors.base[ baseIndex] == null ) {
+            if ( f.errors.base[ baseIndex] === null ) {
               baseIndex++;
               continue;
             }
