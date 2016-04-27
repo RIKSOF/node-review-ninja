@@ -114,7 +114,7 @@ checker.prototype = {
       'brace-style': this.SEVERITY_LOW,
       'camelcase': this.SEVERITY_LOW,
       'comma-spacing': this.SEVERITY_LOW,
-      'consistent-this': [ this.SEVERITY_LOW, 'me'],
+      'consistent-this': [this.SEVERITY_LOW, 'me'],
       'func-names': this.SEVERITY_LOW,
       'indent': [this.SEVERITY_LOW, 2],
       'key-spacing': this.SEVERITY_LOW,
