@@ -61,18 +61,9 @@ checker.prototype = {
    * @return {undefined}
    */
   start: function ESLintStart( from, baseSource, to, headSource ) {
-    var JSCS = require( 'jscs' );
-    var jscsChecker = new JSCS();
-    
-    // Use the Google preset
-    jscsChecker.configure({
-      preset: "google"
-    });
-    
     var errors = {};
-    var data = {};
-    
-    var linter = require("eslint").linter;
+
+    var linter = require('eslint').linter;
     var rules = {
       'no-cond-assign': this.SEVERITY_HIGH,
       'no-console': this.SEVERITY_HIGH,
