@@ -25,7 +25,7 @@ checker.prototype = {
   */
   doesValidate: function( file ) {
     var validates = true;
-    var excluded = [ '.pbxproj', '.xib' ];
+    var excluded = ['.pbxproj', '.xib', '.js'];
     
     excluded.forEach( function( e ) {
       if ( file.substr( -e.length) === e ) {
