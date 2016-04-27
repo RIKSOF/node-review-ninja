@@ -185,6 +185,7 @@ checker.prototype = {
    */
   done: function ESLintDone( callback ) {
     var comment = '';
+    var maxErrorsPerFile = 5;
     
     // Look through all changed files and ensure that we 
     // have not added more errors in this pull.
@@ -202,7 +203,7 @@ checker.prototype = {
       
         // Keep searching till we get to the end of the issues
         // on head branch.
-        while ( f.errors.head !== null && headIndex < f.errors.head.length && errorsCount < 5 ) {
+        while ( f.errors.head !== null && headIndex < f.errors.head.length && errorsCount < maxErrorsPerFile ) {
           // Make sure the current head error is not a null
           if ( f.errors.head[ headIndex] === null ) {
             headIndex++;
