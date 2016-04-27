@@ -4,13 +4,13 @@
  * JS Style Checker.
  */
 
-checker = function () {
+checker = function ESLintChecker() {
   
   /**
    * Array of file paths.
    */
   this.checkedFiles = [];
-}
+};
 
 /**
  * Instance methods.
@@ -24,7 +24,7 @@ checker.prototype = {
   /**
    * Function is used to reset the checker for next pull review.
    */
-  reset: function(  ) {
+  reset: function ESLintReset() {
     this.checkedFiles = [];
   },
   
@@ -33,12 +33,13 @@ checker.prototype = {
    * file.
    *
    * @param file   Relative path of file.
+   * @returns {boolean} If this checker validates given file.
    */
-  doesValidate: function( file ) {
+  doesValidate: function ESLintDoesValidate( file ) {
     var validates = false;
-    var included = [ '.js' ];
+    var included = ['.js'];
     
-    included.forEach( function( e ) {
+    included.forEach( function eachInclude( e ) {
       if ( file.substr( -e.length) === e ) {
         validates = true;
       }
@@ -55,7 +56,7 @@ checker.prototype = {
    * @param to          Path of the head file.
    * @param headSource  Content of the head source file.
    */
-  start: function( from, baseSource, to, headSource ) {
+  start: function ESLintStart( from, baseSource, to, headSource ) {
     var JSCS = require( 'jscs' );
     var jscsChecker = new JSCS();
     
@@ -128,10 +129,6 @@ checker.prototype = {
       'semi-spacing': this.SEVERITY_LOW
     }
 
-    var messages = 
-    
-    console.log( JSON.stringify( messages ) );
-    
     // Lint the base source.
     errors.base = linter.verify( baseSource, {
       rules: rules 
@@ -159,7 +156,7 @@ checker.prototype = {
    * @param position    Position in file
    * @param callback    Once processing is done.
    */
-  step: function( change, path, position, callback ) {
+  step: function ESLintStep( change, path, position, callback ) {
     var comment = '';
     
     // On the line, only report on changes that were made.
@@ -187,7 +184,7 @@ checker.prototype = {
    * 
    * @param callback    Once processing is done.
    */
-  done: function( callback ) {
+  done: function ESLintDone( callback ) {
     var comment = '';
     
     // Look through all changed files and ensure that we 
