@@ -26,7 +26,7 @@ var ninjas = [
   require( __dirname + '/../reviewers/TabsChecker' ),
   require( __dirname + '/../reviewers/GrammarChecker' ),
   require( __dirname + '/../reviewers/SaneLengthChecker' ),
-  require( __dirname + '/../reviewers/JSHintChecker' )
+  require( __dirname + '/../reviewers/JSCSChecker' )
 ];
 
 /**
