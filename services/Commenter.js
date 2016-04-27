@@ -11,6 +11,9 @@ var config = require( __dirname + '/../config' );
 // Our logger for logging to file and console
 var logger = require( __dirname + '/../services/Logger' );
 
+// Underscore library
+var _ = require( 'underscore' );
+
 // Setup git token.
 var github = require( __dirname + '/../services/GitHub' );
 github.setup( config.github.personalToken );
