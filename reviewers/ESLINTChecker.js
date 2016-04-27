@@ -23,6 +23,8 @@ checker.prototype = {
   
   /**
    * Function is used to reset the checker for next pull review.
+   *
+   * @return {undefined}
    */
   reset: function ESLintReset() {
     this.checkedFiles = [];
@@ -32,8 +34,8 @@ checker.prototype = {
    * Indicates to the caller if this checker is interested in given
    * file.
    *
-   * @param file   Relative path of file.
-   * @returns {boolean} If this checker validates given file.
+   * @param {string} file   Relative path of file.
+   * @returns {boolean}     If this checker validates given file.
    */
   doesValidate: function ESLintDoesValidate( file ) {
     var validates = false;
@@ -51,10 +53,12 @@ checker.prototype = {
   /**
    * Process a new file both its current and proposed version.
    *
-   * @param from        Path of the base file.
-   * @param baseSource  Content of the base source file.
-   * @param to          Path of the head file.
-   * @param headSource  Content of the head source file.
+   * @param {string} from         Path of the base file.
+   * @param {string} baseSource   Content of the base source file.
+   * @param {string} to           Path of the head file.
+   * @param {string} headSource   Content of the head source file.
+   *
+   * @return {undefined}
    */
   start: function ESLintStart( from, baseSource, to, headSource ) {
     var JSCS = require( 'jscs' );
@@ -151,10 +155,12 @@ checker.prototype = {
   /**
    * Processes a step in the diff file.
    * 
-   * @param change      Line being read
-   * @param path        File path
-   * @param position    Position in file
-   * @param callback    Once processing is done.
+   * @param {Object} change       Line being read
+   * @param {string} path         File path
+   * @param {number} position     Position in file
+   * @callback callback           Once processing is done.
+   *
+   * @return {undefined}
    */
   step: function ESLintStep( change, path, position, callback ) {
     var comment = '';
@@ -182,7 +188,9 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @param callback    Once processing is done.
+   * @callback callback    Once processing is done.
+   *
+   * @return {undefined}
    */
   done: function ESLintDone( callback ) {
     var comment = '';
