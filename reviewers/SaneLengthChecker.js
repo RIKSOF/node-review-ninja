@@ -4,6 +4,11 @@
  * Sane Length Checker
  */
 
+/**
+ * Constructor
+ *
+ * @class [Checker SaneLengthChecker]
+ */
 checker = function SaneLengthChecker() {
 }
 
@@ -35,7 +40,7 @@ checker.prototype = {
     var validates = true;
     var excluded = ['.html', '.xib', '.pbxproj'];
     
-    excluded.forEach( function( e ) {
+    excluded.forEach( function forEachExcluded( e ) {
       if ( file.substr( -e.length) === e ) {
         validates = false;
       }
@@ -50,7 +55,7 @@ checker.prototype = {
    * @param {string} from         Path of the base file.
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
-   * @callback callback           Callback method to let everyone know
+   * @param {function} callback   Callback method to let everyone know
    *                              we are done.
    *
    * @returns {undefined}
@@ -65,7 +70,7 @@ checker.prototype = {
    * @param {object} change      Line being read
    * @param {string} path        File path
    * @param {number} position    Position in file
-   * @callback callback          Once processing is done.
+   * @param {function} callback  Once processing is done.
    *
    * @returns {undefined}
    */
@@ -94,7 +99,7 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @callback callback    Once processing is done.
+   * @param {function} callback    Once processing is done.
    *
    * @returns {undefined}
    */
