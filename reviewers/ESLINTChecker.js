@@ -196,7 +196,7 @@ checker.prototype = {
    */
   done: function ESLintDone( callback ) {
     var comment = '';
-    var maxErrorsPerFile = 5;
+    const maxErrorsPerFile = 5;
     
     // Look through all changed files and ensure that we 
     // have not added more errors in this pull.

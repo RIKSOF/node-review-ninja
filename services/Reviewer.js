@@ -91,7 +91,7 @@ reviewer.review = function ReviewerReview( url, commitID, baseID, callback ) {
  *
  * @returns {undefined}
  */
-reviewer.startReviewingFile = function ReviewerStartReviewingFile( url, validators, file, headID, baseID,  fileProcessed ) {
+reviewer.startReviewingFile = function ReviewerStartReviewingFile( url, validators, file, headID, baseID, fileProcessed ) {
   var baseSource = '';
   var headSource = '';
   var filesToDownload = 2;

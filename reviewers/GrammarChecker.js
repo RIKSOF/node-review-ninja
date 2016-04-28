@@ -13,7 +13,7 @@ String.prototype.splice = function( start, delCount, newSubStr ) {
  * @class [Checker GrammarChecker]
  */
 checker = function GrammarChecker() {
-}
+};
 
 checker.prototype = {
     
@@ -34,7 +34,7 @@ checker.prototype = {
    */
   doesValidate: function GrammarCheckerDoesValidate(file) {
     var validates = true;
-    var excluded = [ '.pbxproj' ];
+    var excluded = ['.pbxproj'];
     
     excluded.forEach( function eachExcluded( e ) {
       if ( file.substr( -e.length) === e ) {
@@ -92,8 +92,9 @@ checker.prototype = {
       
       for ( i = 0; i < quotedStrings.length; i++ ) {
         findQuotedStrings = quotedStrings[i];
-      
-        while ( result = findQuotedStrings.exec( line ) ) {
+        
+        result = findQuotedStrings.exec( line );
+        while ( result ) {
           nothingToDo = false;
           
           (function GrammarCheckerStepClosure( composedLine ) {
@@ -113,7 +114,7 @@ checker.prototype = {
                 corrections.forEach( function GrammarCheckerIterateCorrections( c ) {
                   // Ignore a correction if its just case change and we are ignoring case sensitive.
                   // Also ignore spaces for single words.
-                  if ( allowCaseSensitive == false && c.text.toLowerCase() == c.correct.toLowerCase().replace(/ /g, '')) {
+                  if ( allowCaseSensitive === false && c.text.toLowerCase() === c.correct.toLowerCase().replace(/ /g, '')) {
                   } else if ( c.correct != '' ) {
                     comment += 'For `' + c.text + '` did you mean `' + c.correct + '`? ';
                   }
@@ -125,6 +126,8 @@ checker.prototype = {
               }
             });
           })( result[1] );
+          
+          result = findQuotedStrings.exec( line );
         }
       }
       

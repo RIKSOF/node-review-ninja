@@ -10,7 +10,7 @@
  * @class [Checker SaneLengthChecker]
  */
 checker = function SaneLengthChecker() {
-}
+};
 
 checker.prototype = {
   lineChangeLimit: 500,
@@ -55,6 +55,7 @@ checker.prototype = {
    * @param {string} from         Path of the base file.
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
+   * @param {string} headSource   Content of the head source file.
    * @param {function} callback   Callback method to let everyone know
    *                              we are done.
    *
