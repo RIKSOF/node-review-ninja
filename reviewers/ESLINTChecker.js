@@ -91,7 +91,7 @@ checker.prototype = {
       'no-eval': this.SEVERITY_MEDIUM,
       'no-lone-blocks': this.SEVERITY_HIGH,
       'no-loop-func': this.SEVERITY_HIGH,
-      'no-magic-numbers': [this.SEVERITY_HIGH, {'ignore': [0, 1]}],
+      'no-magic-numbers': [this.SEVERITY_HIGH, {'ignore': [0, 1, -1]}],
       'no-multi-spaces': this.SEVERITY_HIGH,
       'no-native-reassign': this.SEVERITY_HIGH,
       'no-new': this.SEVERITY_HIGH,
