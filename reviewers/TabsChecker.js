@@ -93,15 +93,15 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @callback callback    Once processing is done.
+   * @param {function} callback    Once processing is done.
    *
    * @returns {undefined}
    */
   done: function TabsCheckerDone( callback ) {
-    var comment = ( this.issuesFound ) ? '\n**Please do not merge till tabs are removed. **' : '';
+    var comment = this.issuesFound ? '\n**Please do not merge till tabs are removed. **' : '';
     callback( comment );
   } 
-}
+};
 
 // Make the module available to all
 module.exports = checker;

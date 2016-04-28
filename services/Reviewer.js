@@ -185,7 +185,7 @@ reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID
  * Review a single chunk.
  *
  * @param {string} url                URL of the pull request.
- * @param {Array.Checker} checkers    Array of validators.
+ * @param {Array.Checker} validators  Array of validators.
  * @param {object} chunk              Chunk of changes.
  * @param {string} commitID           Commit ID.
  * @param {string} path               Path of file being changed.
@@ -212,7 +212,7 @@ reviewer.reviewChunk = function ReviewerReviewChunk( url, validators, chunk, com
         
         if ( comments.length > 0 ) {
           // Post these comments to git
-          reviewer.commenter.comment( url, comments, function() {} );
+          reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
         }
         
         linesProcessed();
@@ -273,7 +273,7 @@ reviewer.reviewCompleted = function ReviewerReviewCompleted( url, checkers, call
   var allDone = _.after( checkers.length, function ReviewerAllDone() {
     
     // Make one comment for the whole pull request.
-    if( pullLevelComments !== '' ) {
+    if ( pullLevelComments !== '' ) {
       var comment = {
         body: pullLevelComments
       };
