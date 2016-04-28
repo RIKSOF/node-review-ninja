@@ -4,7 +4,12 @@
  * Tabs Checker
  */
 
-checker = function() {
+/**
+ * Constructor
+ *
+ * @class [Checker TabsChecker]
+ */
+checker = function TabsChecker() {
 }
 
 checker.prototype = {
@@ -15,7 +20,7 @@ checker.prototype = {
    *
    * @returns {undefined}
    */
-  reset: function(  ) {
+  reset: function TabsCheckerReset() {
     this.issuesFound = false;
   },
   
@@ -27,7 +32,7 @@ checker.prototype = {
    *
    * @returns {undefined}
   */
-  doesValidate: function( file ) {
+  doesValidate: function TabsCheckerDoesValidate( file ) {
     var validates = true;
     var excluded = ['.pbxproj', '.xib', '.js'];
     
@@ -47,12 +52,12 @@ checker.prototype = {
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
    * @param {string} headSource   Content of the head source file.
-   * @callback callback           Callback method to let everyone know
+   * @param {function} callback   Callback method to let everyone know
    *                              we are done.
    *
    * @returns {undefined}
    */
-  start: function( from, baseSource, to, headSource, callback ) {
+  start: function TabsCheckerStart( from, baseSource, to, headSource, callback ) {
     callback();
   },
   
@@ -62,11 +67,11 @@ checker.prototype = {
    * @param {object} change       Line being read
    * @param {string} path         File path
    * @param {number} position     Position in file
-   * @callback callback           Once processing is done.
+   * @param {function} callback   Once processing is done.
    *
    * @returns {undefined}
    */
-  step: function( change, path, position, callback ) {
+  step: function TabsCheckerStep( change, path, position, callback ) {
     var findTabs = /(\t+)/g;
     var comment = '';
     
@@ -92,7 +97,7 @@ checker.prototype = {
    *
    * @returns {undefined}
    */
-  done: function( callback ) {
+  done: function TabsCheckerDone( callback ) {
     var comment = ( this.issuesFound ) ? '\n**Please do not merge till tabs are removed. **' : '';
     callback( comment );
   } 

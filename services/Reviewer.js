@@ -36,7 +36,6 @@ var ninjas = [
  * @param {string} url           Pull request URL.
  * @param {string} commitID      Commit id
  * @param {string} baseID        Commit id for base branch.
- * @param {Commenter} commenter  Commenter module for sending comments.
  * @param {function} callback    Callback once reviewed.
  *
  * @returns {undefined}
@@ -92,17 +91,18 @@ reviewer.review = function ReviewerReview( url, commitID, baseID, callback ) {
  *
  * @returns {undefined}
  */
-reviewer.startReviewingFile = function( url, validators, file, headID, baseID,  fileProcessed ) {
+reviewer.startReviewingFile = function ReviewerStartReviewingFile( url, validators, file, headID, baseID,  fileProcessed ) {
   var baseSource = '';
   var headSource = '';
+  var filesToDownload = 2;
   
-  var filesDownloaded = _.after( 2, function() {
+  var filesDownloaded = _.after( filesToDownload, function ReviewerReviewFileDownloadDone() {
     var allValidatorsStarted = _.after( validators.length, function doneFileProcessing() {
       // We are done processing.
       fileProcessed();
     });
     
-    validators.forEach( function( v ) {
+    validators.forEach( function ReviewerReviewFileValidatorIterate( v ) {
       v.start( file.from, baseSource, file.to, headSource, function doneStartFile() {
         allValidatorsStarted();
       });
@@ -114,7 +114,7 @@ reviewer.startReviewingFile = function( url, validators, file, headID, baseID,  
     
     // Some files will not exist in the base commit.
     if ( res && res.content ) {
-      var buf = new Buffer( res.content, 'base64').toString("ascii");
+      var buf = new Buffer( res.content, 'base64').toString('ascii');
       baseSource = buf;
     }
     
@@ -126,7 +126,7 @@ reviewer.startReviewingFile = function( url, validators, file, headID, baseID,  
     
     // Some files will not exist in the head commit.
     if ( res && res.content ) {
-      var buf = new Buffer( res.content, 'base64').toString("ascii");
+      var buf = new Buffer( res.content, 'base64').toString('ascii');
       headSource = buf;
     }
     
