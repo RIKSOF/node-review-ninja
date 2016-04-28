@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
@@ -12,7 +14,7 @@ String.prototype.splice = function( start, delCount, newSubStr ) {
  *
  * @class [Checker GrammarChecker]
  */
-checker = function GrammarChecker() {
+var checker = function GrammarChecker() {
 };
 
 checker.prototype = {

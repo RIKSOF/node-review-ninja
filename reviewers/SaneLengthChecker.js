@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
@@ -9,7 +11,7 @@
  *
  * @class [Checker SaneLengthChecker]
  */
-checker = function SaneLengthChecker() {
+var checker = function SaneLengthChecker() {
 };
 
 checker.prototype = {

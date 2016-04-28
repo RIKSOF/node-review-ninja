@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
@@ -9,7 +11,7 @@
  *
  * @class [Checker ESLintChecker]
  */
-checker = function ESLintChecker() {
+var checker = function ESLintChecker() {
   
   /**
    * Array of file paths.

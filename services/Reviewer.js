@@ -1,10 +1,12 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
  * Reviewer service
  */
 
-reviewer = {
+var reviewer = {
   commenter: null
 };
 

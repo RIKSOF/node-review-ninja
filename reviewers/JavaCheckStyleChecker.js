@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
@@ -15,7 +17,7 @@ var _ = require( 'underscore' );
  *
  * @class [Checker JavaCheckStyleChecker]
  */
-checker = function JavaCheckStyleChecker() {
+var checker = function JavaCheckStyleChecker() {
   
   /**
    * Array of file paths.

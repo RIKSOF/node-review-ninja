@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
@@ -9,7 +11,7 @@
  *
  * @class [Checker TabsChecker]
  */
-checker = function TabsChecker() {
+var checker = function TabsChecker() {
 }
 
 checker.prototype = {
