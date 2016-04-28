@@ -61,11 +61,16 @@ checker.prototype = {
    * @param {string} from         Path of the base file.
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
+   * @param {string} headSource   Content of the head source file.
    * @param {function} callback   Callback method to let everyone know
    *                              we are done.
+   * 
+   * @returns {undefined}
    */
   start: function ESLintStart( from, baseSource, to, headSource, callback ) {
     var errors = {};
+    var maxComplexity = 4;
+    var indentSpaces = 2;
 
     var linter = require('eslint').linter;
     var rules = {
@@ -88,7 +93,7 @@ checker.prototype = {
       'accessor-pairs': this.SEVERITY_HIGH,
       'array-callback-return': this.SEVERITY_HIGH,
       'block-scoped-var': this.SEVERITY_HIGH,
-      'complexity': [this.SEVERITY_HIGH, { 'max': 4 }],
+      'complexity': [this.SEVERITY_HIGH, { 'max': maxComplexity }],
       'consistent-return': this.SEVERITY_HIGH,
       'curly': this.SEVERITY_HIGH,
       'dot-notation': this.SEVERITY_HIGH,
@@ -120,13 +125,13 @@ checker.prototype = {
       'comma-spacing': this.SEVERITY_LOW,
       'consistent-this': [this.SEVERITY_LOW, 'me'],
       'func-names': this.SEVERITY_LOW,
-      'indent': [this.SEVERITY_LOW, 2],
+      'indent': [this.SEVERITY_LOW, indentSpaces],
       'key-spacing': this.SEVERITY_LOW,
       'keyword-spacing': this.SEVERITY_LOW,
       'quotes': [this.SEVERITY_LOW, 'single'],
       'semi': this.SEVERITY_LOW,
       'semi-spacing': this.SEVERITY_LOW
-    }
+    };
 
     // Lint the base source.
     errors.base = linter.verify( baseSource, {
@@ -157,7 +162,7 @@ checker.prototype = {
    * @param {number} position     Position in file
    * @param {function} callback   Once processing is done.
    *
-   * @return {undefined}
+   * @returns {undefined}
    */
   step: function ESLintStep( change, path, position, callback ) {
     var comment = '';
@@ -187,7 +192,7 @@ checker.prototype = {
    * 
    * @param {function} callback    Once processing is done.
    *
-   * @return {undefined}
+   * @returns {undefined}
    */
   done: function ESLintDone( callback ) {
     var comment = '';
