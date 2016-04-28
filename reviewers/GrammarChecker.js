@@ -7,6 +7,11 @@ String.prototype.splice = function( start, delCount, newSubStr ) {
   return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
 
+/**
+ * Constructor
+ *
+ * @class [Checker GrammarChecker]
+ */
 checker = function GrammarChecker() {
 }
 
@@ -14,6 +19,8 @@ checker.prototype = {
     
   /**
    * Function is used to reset the checker for next pull review.
+   *
+   * @return {undefined}
    */
   reset: function GrammarCheckerReset() {
   },
@@ -22,13 +29,14 @@ checker.prototype = {
    * Indicates to the caller if this checker is interested in given
    * file.
    *
-   * @param file   Relative path of file.
-  */
+   * @param {string} file   Relative path of file.
+   * @returns {boolean}     If this checker validates given file.
+   */
   doesValidate: function GrammarCheckerDoesValidate(file) {
     var validates = true;
     var excluded = [ '.pbxproj' ];
     
-    excluded.forEach( function( e ) {
+    excluded.forEach( function eachExcluded( e ) {
       if ( file.substr( -e.length) === e ) {
         validates = false;
       }
@@ -38,14 +46,16 @@ checker.prototype = {
   },
   
   /**
-   * Process a new file both it current and proposed version.
+   * Process a new file both its current and proposed version.
    *
-   * @param from        Path of the base file.
-   * @param baseSource  Content of the base source file.
-   * @param to          Path of the head file.
-   * @param headSource  Content of the head source file.
-   * @callback callback           Callback method to let everyone know
+   * @param {string} from         Path of the base file.
+   * @param {string} baseSource   Content of the base source file.
+   * @param {string} to           Path of the head file.
+   * @param {string} headSource   Content of the head source file.
+   * @param {function} callback   Callback method to let everyone know
    *                              we are done.
+   * 
+   * @returns {undefined}
    */
   start: function GrammarCheckerStart( from, baseSource, to, headSource, callback ) {
     callback();
@@ -54,10 +64,12 @@ checker.prototype = {
   /**
    * Processes a step in the diff file.
    * 
-   * @param change      Line being read
-   * @param path        File path
-   * @param position    Position in file
-   * @param callback    Once processing is done.
+   * @param {Object} change       Line being read
+   * @param {string} path         File path
+   * @param {number} position     Position in file
+   * @param {function} callback   Once processing is done.
+   *
+   * @returns {undefined}
    */
   step: function GrammarCheckerStep( change, path, position, callback ) {
     var gingerbread = require('gingerbread');
@@ -84,10 +96,10 @@ checker.prototype = {
         while ( result = findQuotedStrings.exec( line ) ) {
           nothingToDo = false;
           
-          (function( composedLine ) {
+          (function GrammarCheckerStepClosure( composedLine ) {
             count++;
             
-            gingerbread( composedLine, function (error, text, result, corrections) {
+            gingerbread( composedLine, function GrammarCheckerResponse(error, text, result, corrections) {
               count--;
               
               if ( corrections && corrections.length > 0 ) {
@@ -98,7 +110,7 @@ checker.prototype = {
                   allowCaseSensitive = true;
                 }
           
-                corrections.forEach( function( c ) {
+                corrections.forEach( function GrammarCheckerIterateCorrections( c ) {
                   // Ignore a correction if its just case change and we are ignoring case sensitive.
                   // Also ignore spaces for single words.
                   if ( allowCaseSensitive == false && c.text.toLowerCase() == c.correct.toLowerCase().replace(/ /g, '')) {
@@ -135,7 +147,9 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @param callback    Once processing is done.
+   * @param {function} callback    Once processing is done.
+   *
+   * @returns {undefined}
    */
   done: function GrammarCheckerDone( callback ) {
     callback( '' );
