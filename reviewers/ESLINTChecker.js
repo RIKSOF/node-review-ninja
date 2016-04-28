@@ -4,6 +4,11 @@
  * JS Style Checker.
  */
 
+/**
+ * Constructor
+ *
+ * @class [Checker ESLintChecker]
+ */
 checker = function ESLintChecker() {
   
   /**
@@ -56,7 +61,7 @@ checker.prototype = {
    * @param {string} from         Path of the base file.
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
-   * @callback callback           Callback method to let everyone know
+   * @param {function} callback   Callback method to let everyone know
    *                              we are done.
    */
   start: function ESLintStart( from, baseSource, to, headSource, callback ) {
@@ -150,7 +155,7 @@ checker.prototype = {
    * @param {Object} change       Line being read
    * @param {string} path         File path
    * @param {number} position     Position in file
-   * @callback callback           Once processing is done.
+   * @param {function} callback   Once processing is done.
    *
    * @return {undefined}
    */
@@ -180,7 +185,7 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @callback callback    Once processing is done.
+   * @param {function} callback    Once processing is done.
    *
    * @return {undefined}
    */
