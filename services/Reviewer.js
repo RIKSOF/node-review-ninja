@@ -23,10 +23,11 @@ var _ = require( 'underscore' );
 
 // Checkers
 var ninjas = [
-  require( __dirname + '/../reviewers/TabsChecker' ),
+  /*require( __dirname + '/../reviewers/TabsChecker' ),
   require( __dirname + '/../reviewers/GrammarChecker' ),
   require( __dirname + '/../reviewers/SaneLengthChecker' ),
-  require( __dirname + '/../reviewers/ESLINTChecker' )
+  require( __dirname + '/../reviewers/ESLINTChecker' ),*/
+  require( __dirname + '/../reviewers/JavaCheckStyleChecker' )
 ];
 
 /**
@@ -92,12 +93,16 @@ reviewer.startReviewingFile = function( url, validators, file, head_id, base_id,
   var headSource = '';
   
   var filesDownloaded = _.after( 2, function() {
-    validators.forEach( function( v ) {
-      v.start( file.from, baseSource, file.to, headSource );
+    var allValidatorsStarted = _.after( validators.length, function doneFileProcessing() {
+      // We are done processing.
+      fileProcessed();
     });
     
-    // We are done processing.
-    fileProcessed();
+    validators.forEach( function( v ) {
+      v.start( file.from, baseSource, file.to, headSource, function doneStartFile() {
+        allValidatorsStarted();
+      });
+    });
   });
   
   // Get the source for base commit.

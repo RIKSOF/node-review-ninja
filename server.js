@@ -103,7 +103,7 @@ if ( config.app.mode.current != config.app.mode.TESTING ) {
   // Set the commenter
   reviewer.commenter = require( __dirname + '/services/ConsoleCommenter' );
   
-  var url = 'https://github.com/RIKSOF/Cedar/pull/1063';
+  var url = 'https://github.com/RIKSOF/checout/pull/100';
   
   reviewer.getPullRequestDetails( url, function( details ) {
     reviewer.review( url, details.head.sha, details.base.sha, function( fail ) {
