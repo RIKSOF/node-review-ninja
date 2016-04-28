@@ -15,6 +15,8 @@ checker.prototype = {
   
   /**
    * Function is used to reset the checker for next pull review.
+   *
+   * @returns {undefined}
    */
   reset: function SaneLengthCheckerReset() {
     this.linesCount = 0;
@@ -25,7 +27,9 @@ checker.prototype = {
    * Indicates to the caller if this checker is interested in given
    * file.
    *
-   * @param file   Relative path of file.
+   * @param {string} file   Relative path of file.
+   *
+   * @returns {undefined}
   */
   doesValidate: function SaneLengthCheckerDoesValidate(file) {
     var validates = true;
@@ -43,11 +47,13 @@ checker.prototype = {
   /**
    * Process a new file both it current and proposed version.
    *
-   * @param from        Path of the base file.
-   * @param baseSource  Content of the base source file.
-   * @param to          Path of the head file.
+   * @param {string} from         Path of the base file.
+   * @param {string} baseSource   Content of the base source file.
+   * @param {string} to           Path of the head file.
    * @callback callback           Callback method to let everyone know
    *                              we are done.
+   *
+   * @returns {undefined}
    */
   start: function SaneLengthCheckerStart(from, baseSource, to, headSource, callback) {
     callback();
@@ -56,10 +62,12 @@ checker.prototype = {
   /**
    * Processes a step in the diff file.
    * 
-   * @param change      Line being read
-   * @param path        File path
-   * @param position    Position in file
-   * @param callback    Once processing is done.
+   * @param {object} change      Line being read
+   * @param {string} path        File path
+   * @param {number} position    Position in file
+   * @callback callback          Once processing is done.
+   *
+   * @returns {undefined}
    */
   step: function SaneLengthCheckerStep(change, path, position, callback) {
     var comment = '';
@@ -86,7 +94,9 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @param callback    Once processing is done.
+   * @callback callback    Once processing is done.
+   *
+   * @returns {undefined}
    */
   done: function SaneLengthCheckerDone(callback) {
     var comment = '';
