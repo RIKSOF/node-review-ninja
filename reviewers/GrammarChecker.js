@@ -82,17 +82,17 @@ checker.prototype = {
     
     // This checker only worries about changes that were added.
     if ( change.add ) {
-      line = change.content;
+      var line = change.content;
       
       // Make sure we send the comments just once per call.
       var count = 0;
       var done = false;
       var nothingToDo = true;
       
-      for ( i = 0; i < quotedStrings.length; i++ ) {
-        findQuotedStrings = quotedStrings[i];
+      for ( var i = 0; i < quotedStrings.length; i++ ) {
+        var findQuotedStrings = quotedStrings[i];
+        var result = findQuotedStrings.exec( line );
         
-        result = findQuotedStrings.exec( line );
         while ( result ) {
           nothingToDo = false;
           let composedLine = result[1];

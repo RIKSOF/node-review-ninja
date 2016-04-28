@@ -54,7 +54,7 @@ reviewer.review = function ReviewerReview( url, commitID, baseID, callback ) {
       
       // Initialize all the checkers.
       var checkers = [];
-      for ( i = 0; i < ninjas.length; i++ ) {
+      for ( var i = 0; i < ninjas.length; i++ ) {
         checkers.push( new ninjas[i]() );
       }
       

@@ -201,10 +201,10 @@ checker.prototype = {
     
     // On the line, only report on changes that were made.
     if ( change.add ) {
-      for ( j = 0; j < this.checkedFiles.length; j++ ) {
+      for ( var j = 0; j < this.checkedFiles.length; j++ ) {
         var f = this.checkedFiles[j]; 
         if ( f.file === path ) {
-          for ( i = 0; i < f.errors.head.length; i++ ) {
+          for ( var i = 0; i < f.errors.head.length; i++ ) {
             if ( f.errors.head[i] !== null && f.errors.head[i].line === change.ln ) {
               comment += f.errors.head[i].message + '\n```java\n' + change.content + '\n```\n';
               f.errors.head[i].reported = true;
@@ -232,17 +232,17 @@ checker.prototype = {
     
     // Look through all changed files and ensure that we 
     // have not added more errors in this pull.
-    for ( i = 0; i < this.checkedFiles.length; i++ ) {
-      f = this.checkedFiles[i];
+    for ( var i = 0; i < this.checkedFiles.length; i++ ) {
+      var f = this.checkedFiles[i];
       
       // We are only interested if the head branch still has
       // lint issues.
       if ( f.errors.head.length > 0 ) {
-        baseIndex = 0;
-        headIndex = 0;
+        var baseIndex = 0;
+        var headIndex = 0;
         
         // We want to limit to no more than 5 comments per file
-        errorsCount = 0;
+        var errorsCount = 0;
       
         // Keep searching till we get to the end of the issues
         // on head branch.
