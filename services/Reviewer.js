@@ -33,11 +33,13 @@ var ninjas = [
 /**
  * Perform review of a pull request!
  *
- * @param url       Pull request URL.
- * @param commit_id Commit id
- * @param base_id   Commit id for base branch.
- * @param commenter Commenter module for sending comments.
- * @param callback  Callback once reviewed.
+ * @param {string} url           Pull request URL.
+ * @param {string} commit_id     Commit id
+ * @param {string} base_id       Commit id for base branch.
+ * @param {Commenter} commenter  Commenter module for sending comments.
+ * @callback callback            Callback once reviewed.
+ *
+ * @returns {undefined}
  */
 reviewer.review = function ( url, commit_id, base_id, callback ) {
   
@@ -80,13 +82,15 @@ reviewer.review = function ( url, commit_id, base_id, callback ) {
 /**
  * Start reviewing file.
  *
- * @param url             URL of the pull request.
- * @param validators      Array of validators for this file.
- * @param file            File to be reviewed.
- * @param head_id         Commit id for the head branch.
- * @param base_id         Commit id for base branch.
- * @param fileProcessed   Callback that is invoked when we complete
- *                        processing a file.
+ * @param {string} url                  URL of the pull request.
+ * @param {Array.Checker} validators    Array of validators for this file.
+ * @param {string} file                 File to be reviewed.
+ * @param {string} head_id              Commit id for the head branch.
+ * @param {string} base_id              Commit id for base branch.
+ * @callback fileProcessed              Callback that is invoked when we complete
+ *                                      processing a file.
+ *
+ * @returns {undefined}
  */
 reviewer.startReviewingFile = function( url, validators, file, head_id, base_id,  fileProcessed ) {
   var baseSource = '';
@@ -133,13 +137,15 @@ reviewer.startReviewingFile = function( url, validators, file, head_id, base_id,
 /**
  * Review a single file.
  *
- * @param url             URL of the pull request.
- * @param checkers        Array of checkers.
- * @param file            File to be reviewed.
- * @param commit_id       Commit ID
- * @param base_commit_id  Base Commit ID
- * @param fileProcessed   Callback that is invoked when we complete
- *                        processing a file.
+ * @param {string} url              URL of the pull request.
+ * @param {Array.Checker} checkers  Array of checkers.
+ * @param {string} file             File to be reviewed.
+ * @param {string} commit_id        Commit ID
+ * @param {string} base_commit_id   Base Commit ID
+ * @callback fileProcessed          Callback that is invoked when we complete
+ *                                  processing a file.
+ *
+ * @returns {undefined}
  */
 reviewer.reviewFile = function( url, checkers, file, commit_id, base_commit_id, fileProcessed ) {
   // Name of the new file. Refresh the position.
@@ -178,15 +184,15 @@ reviewer.reviewFile = function( url, checkers, file, commit_id, base_commit_id, 
 /**
  * Review a single chunk.
  *
- * @param url             URL of the pull request.
- * @param checkers        Array of validators.
- * @param chunk           Chunk of changes.
- * @param commit_id       Commit ID.
- * @param path            Path of file being changed.
- * @param position        Diff position in current file.
- * @param chunkProcessed  Callback once this chunk is processed.
+ * @param {string} url              URL of the pull request.
+ * @param {Array.Checker} checkers  Array of validators.
+ * @param {object} chunk            Chunk of changes.
+ * @param {string} commit_id        Commit ID.
+ * @param {string} path             Path of file being changed.
+ * @param {number} position         Diff position in current file.
+ * @callback chunkProcessed         Callback once this chunk is processed.
  *
- * @return                Updated position in current chunk.
+ * @returns {number} Updated position in current chunk.
  */
 reviewer.reviewChunk = function( url, validators, chunk, commit_id, path, position, chunkProcessed ) {
   
@@ -240,7 +246,9 @@ reviewer.reviewChunk = function( url, validators, chunk, commit_id, path, positi
 /**
  * Reset all the given checkers.
  *
- * @param checkers  Array of checkers.
+ * @param {Array.Checker} checkers  Array of checkers.
+ *
+ * @returns {undefined}
  */
 reviewer.resetCheckers = function( checkers ) {
   checkers.forEach( function( c ) {
@@ -253,9 +261,11 @@ reviewer.resetCheckers = function( checkers ) {
  * request has been reviewed. We make a final comment
  * on the pull request.
  *
- * @param url       URL of the pull request.
- * @param checkers  Checkers to review the code.
- * @param callback  Callback to call once everything is done.
+ * @param {string} url              URL of the pull request.
+ * @param {Array.Checker} checkers  Checkers to review the code.
+ * @callback callback               Callback to call once everything is done.
+ *
+ * @returns {undefined}
  */
 reviewer.reviewCompleted = function( url, checkers, callback ) {
   var pullLevelComments = 'I have reviewed this request. Reviewer must review my comments. ';
@@ -289,8 +299,10 @@ reviewer.reviewCompleted = function( url, checkers, callback ) {
 /**
  * Get the list of all repositories.
  * 
- * @param org       Organization
- * @param callback  Callback once response is received.
+ * @param {string} org      Organization
+ * @callback callback       Callback once response is received.
+ *
+ * @returns {undefined}
  */
 reviewer.getRepositories = function( org, callback ) {
   github.getRepositories( org, callback );
@@ -299,9 +311,11 @@ reviewer.getRepositories = function( org, callback ) {
 /**
  * Get the list of all pulls for a repository.
  * 
- * @param org       Organization
- * @param repo      Repository
- * @param callback  Callback once response is received.
+ * @param {string} org        Organization
+ * @param {string} repo       Repository
+ * @callback callback         Callback once response is received.
+ *
+ * @returns {undefined}
  */
 reviewer.getAllPulls = function( org, repo, callback ) {
   github.getAllPulls( org, repo, callback );
@@ -310,8 +324,10 @@ reviewer.getAllPulls = function( org, repo, callback ) {
 /**
  * Get the pull request details
  *
- * @param url       URL for pull request.
- * @param callback  Callback once response is received.
+ * @param {string} url       URL for pull request.
+ * @callback callback        Callback once response is received.
+ *
+ * @returns {undefined}
  */
 reviewer.getPullRequestDetails = function ( url, callback ) {
   github.getPullRequestDetails( url, callback );
