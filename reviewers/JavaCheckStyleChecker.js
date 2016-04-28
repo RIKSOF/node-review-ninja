@@ -69,6 +69,9 @@ checker.prototype = {
   */
   processFile: function JavaCheckStyleProcessFile( path, source, callback ) {
     var me = this;
+    var lineNumberPosition = 3;
+    var messagePosition = 5;
+    var rulePosition = 6;
     
     // Create a temporary file
     var tmp = require('tmp');
@@ -80,16 +83,16 @@ checker.prototype = {
       } else {
         
         // Write source to temporary file.
-        fs.writeFile( tempPath, source, function _tempFileWritten(err) {
+        fs.writeFile( tempPath, source, function _tempFileWritten(e) {
           var exec = require('child_process').exec;
           var cmd = 'java -jar libs/checkstyle-6.17-all.jar -c /google_checks.xml ' + tempPath;
 
           // Execute the command.
-          exec(cmd, function recvData(error, stdout, stderr) {
+          exec(cmd, function recvData(err2, stdout, stderr) {
             var parseLine = /\[([A-Z]*)\] ([/a-zA-Z0-9~+._\-]*):([0-9]*):([0-9]*): ([a-zA-Z0-9 .+*/&|{}'";:_\-\[\]]*) \[([a-zA-Z]*)\]/g;
       
-            if (error) {
-              logger.error( error );
+            if (err2) {
+              logger.error( err2 );
             } else if (stderr) {
               logger.error( stderr );
             } else {
@@ -113,9 +116,9 @@ checker.prototype = {
                   var error = {
                     severity: result[1],
                     file: path,
-                    line: parseInt(result[3]),
-                    message: result[5],
-                    rule: result[6]
+                    line: parseInt(result[lineNumberPosition]),
+                    message: result[messagePosition],
+                    rule: result[rulePosition]
                   }
             
                   errors.push( error );
