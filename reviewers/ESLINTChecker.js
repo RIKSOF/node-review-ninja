@@ -59,7 +59,7 @@ checker.prototype = {
    * @callback callback           Callback method to let everyone know
    *                              we are done.
    */
-  start: function( from, baseSource, to, headSource, callback ) {
+  start: function ESLintStart( from, baseSource, to, headSource, callback ) {
     var errors = {};
 
     var linter = require('eslint').linter;

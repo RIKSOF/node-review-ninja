@@ -4,7 +4,7 @@
  * Sane Length Checker
  */
 
-checker = function () {
+checker = function SaneLengthChecker() {
 }
 
 checker.prototype = {
@@ -16,7 +16,7 @@ checker.prototype = {
   /**
    * Function is used to reset the checker for next pull review.
    */
-  reset: function(  ) {
+  reset: function SaneLengthCheckerReset() {
     this.linesCount = 0;
     this.fileNames = '';
   },
@@ -27,7 +27,7 @@ checker.prototype = {
    *
    * @param file   Relative path of file.
   */
-  doesValidate: function( file ) {
+  doesValidate: function SaneLengthCheckerDoesValidate(file) {
     var validates = true;
     var excluded = ['.html', '.xib', '.pbxproj'];
     
@@ -49,7 +49,7 @@ checker.prototype = {
    * @callback callback           Callback method to let everyone know
    *                              we are done.
    */
-  start: function( from, baseSource, to, headSource, callback ) {
+  start: function SaneLengthCheckerStart(from, baseSource, to, headSource, callback) {
     callback();
   },
   
@@ -61,7 +61,7 @@ checker.prototype = {
    * @param position    Position in file
    * @param callback    Once processing is done.
    */
-  step: function( change, path, position, callback ) {
+  step: function SaneLengthCheckerStep(change, path, position, callback) {
     var comment = '';
     
     // We will count the lines added and removed.
@@ -88,7 +88,7 @@ checker.prototype = {
    * 
    * @param callback    Once processing is done.
    */
-  done: function( callback ) {
+  done: function SaneLengthCheckerDone(callback) {
     var comment = '';
     
     if ( this.linesCount > this.lineChangeLimit ) {

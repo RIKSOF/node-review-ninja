@@ -7,7 +7,7 @@ String.prototype.splice = function( start, delCount, newSubStr ) {
   return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
 
-checker = function () {
+checker = function GrammarChecker() {
 }
 
 checker.prototype = {
@@ -15,7 +15,7 @@ checker.prototype = {
   /**
    * Function is used to reset the checker for next pull review.
    */
-  reset: function(  ) {
+  reset: function GrammarCheckerReset() {
   },
   
   /**
@@ -24,7 +24,7 @@ checker.prototype = {
    *
    * @param file   Relative path of file.
   */
-  doesValidate: function( file ) {
+  doesValidate: function GrammarCheckerDoesValidate(file) {
     var validates = true;
     var excluded = [ '.pbxproj' ];
     
@@ -47,7 +47,7 @@ checker.prototype = {
    * @callback callback           Callback method to let everyone know
    *                              we are done.
    */
-  start: function( from, baseSource, to, headSource, callback ) {
+  start: function GrammarCheckerStart( from, baseSource, to, headSource, callback ) {
     callback();
   },
   
@@ -59,7 +59,7 @@ checker.prototype = {
    * @param position    Position in file
    * @param callback    Once processing is done.
    */
-  step: function( change, path, position, callback ) {
+  step: function GrammarCheckerStep( change, path, position, callback ) {
     var gingerbread = require('gingerbread');
     var comment = '';
     var quotedStrings1 = /[']([@#$%&()a-zA-Z0-9.!?" ]*)[']/g; 
@@ -137,7 +137,7 @@ checker.prototype = {
    * 
    * @param callback    Once processing is done.
    */
-  done: function( callback ) {
+  done: function GrammarCheckerDone( callback ) {
     callback( '' );
   } 
 }
