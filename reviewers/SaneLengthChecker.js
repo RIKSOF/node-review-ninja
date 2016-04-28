@@ -1,11 +1,18 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
  * Sane Length Checker
  */
 
-checker = function () {
-}
+/**
+ * Constructor
+ *
+ * @class [Checker SaneLengthChecker]
+ */
+var checker = function SaneLengthChecker() {
+};
 
 checker.prototype = {
   lineChangeLimit: 500,
@@ -15,8 +22,10 @@ checker.prototype = {
   
   /**
    * Function is used to reset the checker for next pull review.
+   *
+   * @returns {undefined}
    */
-  reset: function(  ) {
+  reset: function SaneLengthCheckerReset() {
     this.linesCount = 0;
     this.fileNames = '';
   },
@@ -25,13 +34,15 @@ checker.prototype = {
    * Indicates to the caller if this checker is interested in given
    * file.
    *
-   * @param file   Relative path of file.
+   * @param {string} file   Relative path of file.
+   *
+   * @returns {undefined}
   */
-  doesValidate: function( file ) {
+  doesValidate: function SaneLengthCheckerDoesValidate(file) {
     var validates = true;
     var excluded = ['.html', '.xib', '.pbxproj'];
     
-    excluded.forEach( function( e ) {
+    excluded.forEach( function forEachExcluded( e ) {
       if ( file.substr( -e.length) === e ) {
         validates = false;
       }
@@ -43,23 +54,30 @@ checker.prototype = {
   /**
    * Process a new file both it current and proposed version.
    *
-   * @param from        Path of the base file.
-   * @param baseSource  Content of the base source file.
-   * @param to          Path of the head file.
-   * @param headSource  Content of the head source file.
+   * @param {string} from         Path of the base file.
+   * @param {string} baseSource   Content of the base source file.
+   * @param {string} to           Path of the head file.
+   * @param {string} headSource   Content of the head source file.
+   * @param {function} callback   Callback method to let everyone know
+   *                              we are done.
+   *
+   * @returns {undefined}
    */
-  start: function( from, baseSource, to, headSource ) {
+  start: function SaneLengthCheckerStart(from, baseSource, to, headSource, callback) {
+    callback();
   },
   
   /**
    * Processes a step in the diff file.
    * 
-   * @param change      Line being read
-   * @param path        File path
-   * @param position    Position in file
-   * @param callback    Once processing is done.
+   * @param {object} change      Line being read
+   * @param {string} path        File path
+   * @param {number} position    Position in file
+   * @param {function} callback  Once processing is done.
+   *
+   * @returns {undefined}
    */
-  step: function( change, path, position, callback ) {
+  step: function SaneLengthCheckerStep(change, path, position, callback) {
     var comment = '';
     
     // We will count the lines added and removed.
@@ -84,9 +102,11 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @param callback    Once processing is done.
+   * @param {function} callback    Once processing is done.
+   *
+   * @returns {undefined}
    */
-  done: function( callback ) {
+  done: function SaneLengthCheckerDone(callback) {
     var comment = '';
     
     if ( this.linesCount > this.lineChangeLimit ) {
