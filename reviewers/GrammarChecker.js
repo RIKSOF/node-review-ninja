@@ -82,9 +82,6 @@ checker.prototype = {
     if ( change.add ) {
       line = change.content;
       
-      // Compose a string of all quotes to check against.
-      var composedLine = '';
-      
       // Make sure we send the comments just once per call.
       var count = 0;
       var done = false;
@@ -96,36 +93,35 @@ checker.prototype = {
         result = findQuotedStrings.exec( line );
         while ( result ) {
           nothingToDo = false;
-          
-          (function GrammarCheckerStepClosure( composedLine ) {
-            count++;
+          let composedLine = result[1];
             
-            gingerbread( composedLine, function GrammarCheckerResponse(error, text, result, corrections) {
-              count--;
+          count++;
+            
+          gingerbread( composedLine, function GrammarCheckerResponse(error, text, result, corrections) {
+            count--;
               
-              if ( corrections && corrections.length > 0 ) {
+            if ( corrections && corrections.length > 0 ) {
                 
-                // We should allow case sensitive suggestions only if its a sentence.
-                var allowCaseSensitive = false;
-                if ( composedLine.indexOf(' ') >= 0 ) {
-                  allowCaseSensitive = true;
-                }
+              // We should allow case sensitive suggestions only if its a sentence.
+              var allowCaseSensitive = false;
+              if ( composedLine.indexOf(' ') >= 0 ) {
+                allowCaseSensitive = true;
+              }
           
-                corrections.forEach( function GrammarCheckerIterateCorrections( c ) {
-                  // Ignore a correction if its just case change and we are ignoring case sensitive.
-                  // Also ignore spaces for single words.
-                  if ( allowCaseSensitive === false && c.text.toLowerCase() === c.correct.toLowerCase().replace(/ /g, '')) {
-                  } else if ( c.correct != '' ) {
-                    comment += 'For `' + c.text + '` did you mean `' + c.correct + '`? ';
-                  }
-                });
-              }
+              corrections.forEach( function GrammarCheckerIterateCorrections( c ) {
+                // Ignore a correction if its just case change and we are ignoring case sensitive.
+                // Also ignore spaces for single words.
+                if ( allowCaseSensitive === false && c.text.toLowerCase() === c.correct.toLowerCase().replace(/ /g, '')) {
+                } else if ( c.correct !== '' ) {
+                  comment += 'For `' + c.text + '` did you mean `' + c.correct + '`? ';
+                }
+              });
+            }
               
-              if ( done && count <= 0 ) {
-                callback( comment );
-              }
-            });
-          })( result[1] );
+            if ( done && count <= 0 ) {
+              callback( comment );
+            }
+          });
           
           result = findQuotedStrings.exec( line );
         }
@@ -157,7 +153,7 @@ checker.prototype = {
   done: function GrammarCheckerDone( callback ) {
     callback( '' );
   } 
-}
+};
 
 // Make the module available to all
 module.exports = checker;

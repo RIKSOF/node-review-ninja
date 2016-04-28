@@ -10,6 +10,11 @@ var logger = require( __dirname + '/../services/Logger' );
 // Underscore library
 var _ = require( 'underscore' );
 
+/**
+ * Constructor
+ *
+ * @class [Checker JavaCheckStyleChecker]
+ */
 checker = function JavaCheckStyleChecker() {
   
   /**
@@ -18,9 +23,6 @@ checker = function JavaCheckStyleChecker() {
   this.checkedFiles = [];
 };
 
-/**
- * Instance methods.
- */
 checker.prototype = {
   
   SEVERITY_HIGH: 'ERROR',
@@ -62,7 +64,7 @@ checker.prototype = {
   *
   * @param {string} path         Path of the file.
   * @param {string} source       Content of the source file.
-  * @callback callback           Callback method to let everyone know
+  * @param {function} callback   Callback method to let everyone know
   *                              we are done.
   *
   * @return {undefined}
@@ -90,7 +92,10 @@ checker.prototype = {
           // Execute the command.
           exec(cmd, function recvData(err2, stdout, stderr) {
             var parseLine = /\[([A-Z]*)\] ([/a-zA-Z0-9~+._\-]*):([0-9]*):([0-9]*): ([a-zA-Z0-9 .+*/&|{}'";:_\-\[\]]*) \[([a-zA-Z]*)\]/g;
-      
+            
+            // Process all errors
+            var errors = [];
+            
             if (err2) {
               logger.error( err2 );
             } else if (stderr) {
@@ -99,9 +104,6 @@ checker.prototype = {
       
               // Get the output line by line.
               var index = stdout.indexOf( '\n' );
-        
-              // Process all errors
-              var errors = [];
         
               // While we have more lines to read.
               while (index > -1) {
@@ -125,10 +127,10 @@ checker.prototype = {
                 }
               }
             }
-      
+            
             // Clean up the file as its no longer needed.
             cleanupCallback();
-            
+          
             // Let the caller know about the errors.
             callback( errors );
           });
@@ -144,7 +146,7 @@ checker.prototype = {
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
    * @param {string} headSource   Content of the head source file.
-   * @callback callback           Callback method to let everyone know
+   * @param {function} callback   Callback method to let everyone know
    *                              we are done.
    *
    * @return {undefined}
@@ -188,7 +190,7 @@ checker.prototype = {
    * @param {Object} change       Line being read
    * @param {string} path         File path
    * @param {number} position     Position in file
-   * @callback callback           Once processing is done.
+   * @param {function} callback   Once processing is done.
    *
    * @return {undefined}
    */
@@ -218,7 +220,7 @@ checker.prototype = {
    * It gives checker the opportunity to make a comment to the full
    * diff.
    * 
-   * @callback callback    Once processing is done.
+   * @param {function} callback    Once processing is done.
    *
    * @return {undefined}
    */

@@ -17,9 +17,6 @@ checker = function ESLintChecker() {
   this.checkedFiles = [];
 };
 
-/**
- * Instance methods.
- */
 checker.prototype = {
   
   SEVERITY_HIGH: 1,
@@ -196,7 +193,7 @@ checker.prototype = {
    */
   done: function ESLintDone( callback ) {
     var comment = '';
-    const maxErrorsPerFile = 5;
+    var maxErrorsPerFile = 5;
     
     // Look through all changed files and ensure that we 
     // have not added more errors in this pull.
