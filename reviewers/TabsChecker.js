@@ -43,8 +43,11 @@ checker.prototype = {
    * @param baseSource  Content of the base source file.
    * @param to          Path of the head file.
    * @param headSource  Content of the head source file.
+   * @callback callback           Callback method to let everyone know
+   *                              we are done.
    */
-  start: function( from, baseSource, to, headSource ) {
+  start: function( from, baseSource, to, headSource, callback ) {
+    callback();
   },
   
   /**

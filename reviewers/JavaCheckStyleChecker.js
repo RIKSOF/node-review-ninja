@@ -69,49 +69,68 @@ checker.prototype = {
   */
   processFile: function JavaCheckStyleProcessFile( path, source, callback ) {
     var me = this;
-    var exec = require('child_process').exec;
-    var cmd = 'java -jar libs/checkstyle-6.17-all.jar -c /google_checks.xml ../fitmo-android/src/com/fitmo/controller/LoginController.java';
-
-    // Execute the command.
-    exec(cmd, function recvData(error, stdout, stderr) {
-      var parseLine = /\[([A-Z]*)\] ([/a-zA-Z0-9~+._\-]*):([0-9]*):([0-9]*): ([a-zA-Z0-9 .+*/&|{}'";:_\-\[\]]*) \[([a-zA-Z]*)\]/g;
-      
-      if (error) {
-        logger.error( error );
-      } else if (stderr) {
-        logger.error( stderr );
+    
+    // Create a temporary file
+    var tmp = require('tmp');
+    var fs = require('fs');
+    
+    tmp.file({ postfix: '.java' }, function _tempFileCreated(err, tempPath, fd, cleanupCallback) {
+      if (err) {
+        logger.error(err);
       } else {
+        
+        // Write source to temporary file.
+        fs.writeFile( tempPath, source, function _tempFileWritten(err) {
+          var exec = require('child_process').exec;
+          var cmd = 'java -jar libs/checkstyle-6.17-all.jar -c /google_checks.xml ' + tempPath;
+
+          // Execute the command.
+          exec(cmd, function recvData(error, stdout, stderr) {
+            var parseLine = /\[([A-Z]*)\] ([/a-zA-Z0-9~+._\-]*):([0-9]*):([0-9]*): ([a-zA-Z0-9 .+*/&|{}'";:_\-\[\]]*) \[([a-zA-Z]*)\]/g;
       
-        // Get the output line by line.
-        var index = stdout.indexOf( '\n' );
+            if (error) {
+              logger.error( error );
+            } else if (stderr) {
+              logger.error( stderr );
+            } else {
+      
+              // Get the output line by line.
+              var index = stdout.indexOf( '\n' );
         
-        // Process all errors
-        var errors = [];
+              // Process all errors
+              var errors = [];
         
-        // While we have more lines to read.
-        while (index > -1) {
-          var line = stdout.substring(0, index);
-          stdout = stdout.substring(index + 1);
-          index = stdout.indexOf('\n');
+              // While we have more lines to read.
+              while (index > -1) {
+                var line = stdout.substring(0, index);
+                stdout = stdout.substring(index + 1);
+                index = stdout.indexOf('\n');
           
-          // Parse the line using regular expressions.
-          var result = parseLine.exec( line );
+                // Parse the line using regular expressions.
+                var result = parseLine.exec( line );
           
-          if ( result ) {
-            var error = {
-              severity: result[1],
-              file: path,
-              line: result[3],
-              message: result[5],
-              rule: result[6]
-            }
+                if ( result ) {
+                  var error = {
+                    severity: result[1],
+                    file: path,
+                    line: parseInt(result[3]),
+                    message: result[5],
+                    rule: result[6]
+                  }
             
-            errors.push( error );
-          }
-        }
-      }
+                  errors.push( error );
+                }
+              }
+            }
       
-      callback( errors );
+            // Clean up the file as its no longer needed.
+            cleanupCallback();
+            
+            // Let the caller know about the errors.
+            callback( errors );
+          });
+        });
+      }
     });
   },
   
@@ -144,9 +163,6 @@ checker.prototype = {
       };
       
       me.checkedFiles.push( report );
-      
-      console.log( JSON.stringify( report ));
-      
       callback();
     }); 
     
@@ -183,7 +199,7 @@ checker.prototype = {
         if ( f.file === path ) {
           for ( i = 0; i < f.errors.head.length; i++ ) {
             if ( f.errors.head[i] !== null && f.errors.head[i].line === change.ln ) {
-              comment += f.errors.head[i].message + '\n```javascript\n' + f.errors.head[i].source + '\n```\n';
+              comment += f.errors.head[i].message + '\n```java\n' + change.content + '\n```\n';
               f.errors.head[i].reported = true;
             }
           }
@@ -255,7 +271,6 @@ checker.prototype = {
               // report them in the line by line review.
               if ( !f.errors.head[headIndex].reported && f.errors.head[headIndex].severity >= this.SEVERITY_HIGH ) {
                 comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].message + '*';
-                comment += '\n```javascript\n' + f.errors.head[headIndex].source + '\n```\n';
                 errorsCount++;
               }
               
@@ -267,7 +282,6 @@ checker.prototype = {
             // report them in the line by line review.
             if ( !f.errors.head[headIndex].reported && f.errors.head[headIndex].severity >= this.SEVERITY_HIGH ) {
               comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].message + '*';
-              comment += '\n```javascript\n' + f.errors.head[headIndex].source + '\n```\n';
               errorsCount++;
             }
             

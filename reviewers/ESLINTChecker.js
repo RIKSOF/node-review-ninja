@@ -56,11 +56,10 @@ checker.prototype = {
    * @param {string} from         Path of the base file.
    * @param {string} baseSource   Content of the base source file.
    * @param {string} to           Path of the head file.
-   * @param {string} headSource   Content of the head source file.
-   *
-   * @return {undefined}
+   * @callback callback           Callback method to let everyone know
+   *                              we are done.
    */
-  start: function ESLintStart( from, baseSource, to, headSource ) {
+  start: function( from, baseSource, to, headSource, callback ) {
     var errors = {};
 
     var linter = require('eslint').linter;
@@ -141,6 +140,8 @@ checker.prototype = {
     };
     
     this.checkedFiles.push( report );
+    
+    callback();
   },
   
   /**
