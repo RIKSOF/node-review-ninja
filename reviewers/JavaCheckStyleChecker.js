@@ -119,7 +119,7 @@ checker.prototype = {
                     line: parseInt(result[lineNumberPosition]),
                     message: result[messagePosition],
                     rule: result[rulePosition]
-                  }
+                  };
             
                   errors.push( error );
                 }
@@ -158,7 +158,7 @@ checker.prototype = {
     };
     
     // Once everythins is done, finish off with this.
-    var allDone = _.after( filesToCompare, function () {
+    var allDone = _.after( filesToCompare, function JavaCheckStyleFileDone() {
       // Remember this report.
       var report = {
         file: to,
