@@ -169,7 +169,7 @@ reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID
   });
 
   // Go through all chunks in the new file.
-  if ( file.chunks.length > 0 ) {
+  if ( file.chunks.length > 0 && validators.length > 0 ) {
     
     // Download the version of this file from base and head branches.
     reviewer.startReviewingFile( url, validators, file, commitID, baseCommitID, function ReviewerReviewFileDone() {

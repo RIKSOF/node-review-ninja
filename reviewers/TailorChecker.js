@@ -90,7 +90,7 @@ checker.prototype = {
         // Write source to temporary file.
         fs.writeFile( tempPath, source, function _tempFileWritten(e) {
           var exec = require('child_process').exec;
-          var cmd = 'tailor --no-color ' + tempPath;
+          var cmd = 'tailor --no-color --except=forced-type-cast,todo-syntax ' + tempPath;
 
           // Execute the command.
           exec(cmd, function recvData(err2, stdout, stderr) {
@@ -231,6 +231,8 @@ checker.prototype = {
     var comment = '';
     var maxErrorsPerFile = 5;
     
+    console.log( 'done!' );
+    
     // Look through all changed files and ensure that we 
     // have not added more errors in this pull.
     for ( var i = 0; i < this.checkedFiles.length; i++ ) {
@@ -277,7 +279,7 @@ checker.prototype = {
               // All these comments are not in the base branch, so they
               // are additional comments. Need to make sure we did not
               // report them in the line by line review.
-              if ( !f.errors.head[headIndex].reported && f.errors.head[headIndex].severity >= this.SEVERITY_HIGH ) {
+              if ( !f.errors.head[headIndex].reported ) {
                 comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].message + '*';
                 errorsCount++;
               }
@@ -288,7 +290,7 @@ checker.prototype = {
             // All these comments are not in the base branch, so they
             // are additional comments. Need to make sure we did not
             // report them in the line by line review.
-            if ( !f.errors.head[headIndex].reported && f.errors.head[headIndex].severity >= this.SEVERITY_HIGH ) {
+            if ( !f.errors.head[headIndex].reported ) {
               comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].message + '*';
               errorsCount++;
             }
