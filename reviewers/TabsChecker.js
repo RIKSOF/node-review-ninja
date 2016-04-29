@@ -36,7 +36,7 @@ checker.prototype = {
   */
   doesValidate: function TabsCheckerDoesValidate( file ) {
     var validates = true;
-    var excluded = ['.pbxproj', '.xib', '.js'];
+    var excluded = ['.pbxproj', '.xib', '.js', '.java', '.swift'];
     
     excluded.forEach( function( e ) {
       if ( file.substr( -e.length) === e ) {
