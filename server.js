@@ -165,7 +165,7 @@ if ( config.app.mode.current !== config.app.mode.TESTING ) {
   // Set the commenter
   reviewer.commenter = require( __dirname + '/services/ConsoleCommenter' );
   
-  var url = 'https://github.com/RIKSOF/checout/pull/115';
+  var url = 'https://github.com/RIKSOF/riksofcom/pull/299';
   
   reviewer.getPullRequestDetails( url, function fTestGetPullRequestDetails( details ) {
     reviewer.review( url, details.head.sha, details.base.sha, function fTestReview( fail ) {

@@ -30,7 +30,8 @@ var ninjas = [
   require( __dirname + '/../reviewers/SaneLengthChecker' ),
   require( __dirname + '/../reviewers/ESLINTChecker' ),
   require( __dirname + '/../reviewers/JavaCheckStyleChecker' ),
-  require( __dirname + '/../reviewers/TailorChecker' )
+  require( __dirname + '/../reviewers/TailorChecker' ),
+  require( __dirname + '/../reviewers/W3CCssChecker' )
 ];
 
 /**
@@ -226,7 +227,7 @@ reviewer.reviewChunk = function ReviewerReviewChunk( url, validators, chunk, com
           
           // Post these comments to git
           if ( comments.length > 0 ) {
-             reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
+            reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
           }
         }
         
