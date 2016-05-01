@@ -1,15 +1,20 @@
+'use strict';
+
 /**
  * Copyright RIKSOF (Private) Limited 2016.
  *
  * GitHub service
  */
-
 github = {}
 
 /**
  * Setup the connection.
+ *
+ * @param {string} token        User token.
+ *
+ * @returns {undefined}
  */
-github.setup = function ( token ) {
+github.setup = function GithubSetup( token ) {
   var GitHubApi = require("github");
   var config = require( __dirname + '/../config' );
   
@@ -56,10 +61,12 @@ github.setup = function ( token ) {
 /**
  * Get the diff for this pull request.
  *
- * @param u        URL for request.
- * @param callback Once the request completes.
+ * @param {string} u            URL for request.
+ * @param {function} callback   Once the request completes.
+ *
+ * @retruns {undefined}
  */
-github.getDiff = function ( u, callback ) {
+github.getDiff = function GithubDiff( u, callback ) {
   var url = require('url');
   var decoded = url.parse( u );
   var values = decoded.path.split( '/' );
@@ -74,10 +81,12 @@ github.getDiff = function ( u, callback ) {
 /**
  * Get pull request details
  *
- * @param u         URL for pull request.
- * @param callback  Callback once response is received.
+ * @param {string} u            URL for pull request.
+ * @param {function} callback   Callback once response is received.
+ *
+ * @returns {undefined}
  */
-github.getPullRequestDetails = function ( u, callback ) {
+github.getPullRequestDetails = function GithubPullRequestDetails( u, callback ) {
   var url = require('url');
   var decoded = url.parse( u );
   var values = decoded.path.split( '/' );
@@ -101,11 +110,13 @@ github.getPullRequestDetails = function ( u, callback ) {
 /**
  * Comment on a pull request.
  *
- * @param u        URL for request.
- * @param comment  Comment
- * @param callback Once the request completes.
+ * @param {string} u            URL for request.
+ * @param {Comment} comment     Comment
+ * @param {function} callback   Once the request completes.
+ *
+ * @returns {undefined}
  */
-github.commentOnPull = function ( u, comment, callback ) {
+github.commentOnPull = function GithubCommentOnPull( u, comment, callback ) {
   var url = require('url');
   var decoded = url.parse( u );
   var values = decoded.path.split( '/' );
@@ -120,9 +131,11 @@ github.commentOnPull = function ( u, comment, callback ) {
 /**
  * Comment on an issue.
  *
- * @param u        URL for the issue.
- * @param comment  Comment
- * @param callback Once the request completes.
+ * @param {string} u            URL for the issue.
+ * @param {Comment} comment     Comment
+ * @param {function} callback   Once the request completes.
+ *
+ * @returns {undefined}
  */
 github.commentOnIssue = function ( u, comment, callback ) {
   var url = require('url');
@@ -139,8 +152,10 @@ github.commentOnIssue = function ( u, comment, callback ) {
 /**
  * Get repositories
  *
- * @param org       Organization.
- * @param callback  Callback once response is received.
+ * @param {string} org          Organization.
+ * @param {function} callback   Callback once response is received.
+ *
+ * @returns {undefined}
  */
 github.getRepositories = function ( org, callback ) {
   // Our logger for logging to file and console
@@ -160,9 +175,11 @@ github.getRepositories = function ( org, callback ) {
 /**
  * Get the list of all pulls for a repository.
  * 
- * @param org       Organization
- * @param repo      Repository
- * @param callback  Callback once response is received.
+ * @param {string} org          Organization
+ * @param {string} repo         Repository
+ * @param {function} callback   Callback once response is received.
+ *
+ * @returns {undefined}
  */
 github.getAllPulls = function ( org, repo, callback ) {
   // Our logger for logging to file and console
@@ -183,9 +200,12 @@ github.getAllPulls = function ( org, repo, callback ) {
 /**
  * Get content of a file.
  *
- * @param u           URL of pull request
- * @param path        Path to file
- * @param commit_id   ID of commit
+ * @param {string} u            URL of pull request
+ * @param {string} path         Path to file
+ * @param {string} commit_id    ID of commit
+ * @param {function} callback   Callback when done.
+ *
+ * @returns {undefined}
  */
 github.getContent = function( u, path, commit_id, callback ) {
   // Our logger for logging to file and console
