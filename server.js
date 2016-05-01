@@ -80,10 +80,11 @@ function start() {
  * @returns {undefined}
  */
 function step( callback ) {
-  console.log('stepping');
+  process.stdout.write( '.' );
+  
   // First check if we need to progress to the next repository and there are more repositories to review.
   if ( data.currentRepo < 0 || ( data.currentPull + 1 >= data.pullsInCurrentRepo.length && data.currentRepo + 1 < data.allRepos.length )) {
-    console.log( 'Repo: ' + data.currentRepo );
+    process.stdout.write( 'O' );
     
     // We move to the next repo.
     data.currentRepo++;
@@ -97,7 +98,7 @@ function step( callback ) {
         data.pullsInCurrentRepo = pulls.update( ps );
         
         // Update this list to the list of new pulls.
-        data.allNewPulls = data.allNewPulls.concat( data.pullsInCurrentRepo );
+        data.allNewPulls = data.allNewPulls.concat( ps );
       } else {
         data.pullsInCurrentRepo = [];
       }
@@ -110,8 +111,7 @@ function step( callback ) {
     });
     
   } else if ( data.currentPull + 1 < data.pullsInCurrentRepo.length ) {
-    console.log( 'Pull: ' + data.currentPull );
-    
+
     // Review the next pull request.
     data.currentPull++;
     
@@ -165,7 +165,7 @@ if ( config.app.mode.current != config.app.mode.TESTING ) {
   // Set the commenter
   reviewer.commenter = require( __dirname + '/services/ConsoleCommenter' );
   
-  var url = 'https://github.com/RIKSOF/Cedar/pull/1126';
+  var url = 'https://github.com/RIKSOF/checout/pull/115';
   
   reviewer.getPullRequestDetails( url, function fTestGetPullRequestDetails( details ) {
     reviewer.review( url, details.head.sha, details.base.sha, function fTestReview( fail ) {

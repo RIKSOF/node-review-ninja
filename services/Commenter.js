@@ -31,16 +31,31 @@ commenter.comment = function ( url, comments, callback ) {
     callback();
   });
   
-  comments.forEach( function( c ) {
-    github.commentOnPull( url, c, function(err, res) {
+  // Track the comments that have been posted
+  var commentToPost = 0;
+  
+  // The function we will use to make posts.
+  var postComment = function fPostComment() {
+    github.commentOnPull( url, comments[commentToPost], function(err, res) {
       if ( err ) {
         logger.error( err );
-        logger.info( 'Caused by: ' + JSON.stringify( c ) );
+        logger.info( 'Caused by: ' + JSON.stringify( comments[commentToPost] ) );
+      } 
+      
+      commentToPost++;
+        
+      // If there are more comments to be posted.
+      if ( commentToPost < comments.length ) {
+        // Post each comment after a break of a few seconds.
+        setTimeout( postComment, config.app.commentInterval );
       }
-
+      
       posted();
     });
-  });
+  };
+  
+  // Start posting the comments. One comment is posted at a time.
+  setTimeout( postComment, config.app.commentInterval );
 };
 
 /**

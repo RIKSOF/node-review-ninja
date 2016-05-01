@@ -8,7 +8,8 @@ var config = {}
 // Application Information
 config.app = {}
 config.app.data = __dirname + '/pulls.txt';
-config.app.interval = 60000;
+config.app.interval = 300000;
+config.app.commentInterval = 5000;
 config.app.mode = {}
 config.app.mode.TESTING = 'testing';
 config.app.mode.DEVELOPMENT = 'development';
