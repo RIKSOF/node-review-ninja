@@ -102,7 +102,7 @@ github.getPullRequestDetails = function GithubPullRequestDetails( u, callback ) 
     user: values[github.userPosition],
     repo: values[github.repoPosition],
     number: values[github.pullNumberPosition]
-  }, function( err, res ) {
+  }, function GithubPullResponse( err, res ) {
     if ( err ) {
       logger.error( err );
     }
@@ -141,7 +141,7 @@ github.commentOnPull = function GithubCommentOnPull( u, comment, callback ) {
  *
  * @returns {undefined}
  */
-github.commentOnIssue = function ( u, comment, callback ) {
+github.commentOnIssue = function GithubCommentOnIssue( u, comment, callback ) {
   var url = require('url');
   var decoded = url.parse( u );
   var values = decoded.path.split( '/' );
@@ -161,13 +161,13 @@ github.commentOnIssue = function ( u, comment, callback ) {
  *
  * @returns {undefined}
  */
-github.getRepositories = function ( org, callback ) {
+github.getRepositories = function GithubGetRepository( org, callback ) {
   // Our logger for logging to file and console
   var logger = require( __dirname + '/../services/Logger' );
   
   github.api.repos.getFromOrg({
     org: org
-  }, function( err, res ) {
+  }, function GithubRepositoryResponse( err, res ) {
     if ( err ) {
       logger.error( err );
     }
@@ -185,14 +185,14 @@ github.getRepositories = function ( org, callback ) {
  *
  * @returns {undefined}
  */
-github.getAllPulls = function ( org, repo, callback ) {
+github.getAllPulls = function GithubAllPulls( org, repo, callback ) {
   // Our logger for logging to file and console
   var logger = require( __dirname + '/../services/Logger' );
   
   github.api.pullRequests.getAll({
     user: org,
     repo: repo
-  }, function( err, res ) {
+  }, function GithubAllPullsResponse( err, res ) {
     if ( err ) {
       logger.error( err );
     }
@@ -211,7 +211,7 @@ github.getAllPulls = function ( org, repo, callback ) {
  *
  * @returns {undefined}
  */
-github.getContent = function( u, path, commit_id, callback ) {
+github.getContent = function GithubGetContent( u, path, commit_id, callback ) {
   // Our logger for logging to file and console
   var logger = require( __dirname + '/../services/Logger' );
   var url = require('url');
@@ -223,7 +223,7 @@ github.getContent = function( u, path, commit_id, callback ) {
     repo: values[github.repoPosition],
     path: path,
     ref: commit_id
-  }, function( err, res ) {
+  }, function GitubContentResponse( err, res ) {
     if ( err ) {
       logger.error( err );
     }
