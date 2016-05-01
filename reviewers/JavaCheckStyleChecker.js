@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Java Style Checker.
+ * @file Java Style Checker.
  */
 
 // Our logger for logging to file and console

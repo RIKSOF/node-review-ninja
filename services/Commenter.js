@@ -1,7 +1,7 @@
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Commenter service
+ * @file Commenter service
  */
 
 commenter = {};

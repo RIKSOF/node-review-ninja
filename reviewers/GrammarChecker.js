@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Grammar Checker
+ * @file Grammar Checker
  */
 String.prototype.splice = function( start, delCount, newSubStr ) {
   return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));

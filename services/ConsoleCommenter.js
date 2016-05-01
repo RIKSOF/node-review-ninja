@@ -1,7 +1,7 @@
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Console Commenter service - Prints comment to console.
+ * @file Console Commenter service - Prints comment to console.
  */
 
 commenter = {};

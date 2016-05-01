@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Tailor Checker for Swift programming language.
+ * @file Tailor Checker for Swift programming language.
  */
 
 // Our logger for logging to file and console
