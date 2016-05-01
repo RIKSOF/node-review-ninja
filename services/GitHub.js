@@ -5,7 +5,11 @@
  *
  * @file GitHub service
  */
-github = {}
+github = {
+  userPosition: 1,
+  repoPosition: 2,
+  pullNumberPosition: 4
+};
 
 /**
  * Setup the connection.
@@ -56,7 +60,7 @@ github.setup = function GithubSetup( token ) {
       type: "oauth",
       token: token
   });
-}
+};
 
 /**
  * Get the diff for this pull request.
@@ -72,11 +76,11 @@ github.getDiff = function GithubDiff( u, callback ) {
   var values = decoded.path.split( '/' );
   
   github.diffapi.pullRequests.get({ 
-    user: values[1],
-    repo: values[2],
-    number: values[4]
+    user: values[github.userPosition],
+    repo: values[github.repoPosition],
+    number: values[github.pullNumberPosition]
   }, callback );
-}
+};
 
 /**
  * Get pull request details
@@ -95,9 +99,9 @@ github.getPullRequestDetails = function GithubPullRequestDetails( u, callback ) 
   var logger = require( __dirname + '/../services/Logger' );
   
   github.api.pullRequests.get({
-    user: values[1],
-    repo: values[2],
-    number: values[4]
+    user: values[github.userPosition],
+    repo: values[github.repoPosition],
+    number: values[github.pullNumberPosition]
   }, function( err, res ) {
     if ( err ) {
       logger.error( err );
@@ -105,7 +109,7 @@ github.getPullRequestDetails = function GithubPullRequestDetails( u, callback ) 
    
     callback( eval( res ));
   });
-}
+};
 
 /**
  * Comment on a pull request.
@@ -121,12 +125,12 @@ github.commentOnPull = function GithubCommentOnPull( u, comment, callback ) {
   var decoded = url.parse( u );
   var values = decoded.path.split( '/' );
   
-  comment.user = values[1];
-  comment.repo = values[2];
-  comment.number = values[4];
+  comment.user = values[github.userPosition];
+  comment.repo = values[github.repoPosition];
+  comment.number = values[github.pullNumberPosition];
   
   github.api.pullRequests.createComment( comment, callback );
-}
+};
 
 /**
  * Comment on an issue.
@@ -142,12 +146,12 @@ github.commentOnIssue = function ( u, comment, callback ) {
   var decoded = url.parse( u );
   var values = decoded.path.split( '/' );
   
-  comment.user = values[1];
-  comment.repo = values[2];
-  comment.number = values[4];
+  comment.user = values[github.userPosition];
+  comment.repo = values[github.repoPosition];
+  comment.number = values[github.pullNumberPosition];
   
   github.api.issues.createComment( comment, callback );
-}
+};
 
 /**
  * Get repositories
@@ -170,7 +174,7 @@ github.getRepositories = function ( org, callback ) {
    
     callback( eval( res ));
   });
-}
+};
 
 /**
  * Get the list of all pulls for a repository.
@@ -195,7 +199,7 @@ github.getAllPulls = function ( org, repo, callback ) {
    
     callback( eval( res ));
   });
-}
+};
 
 /**
  * Get content of a file.
@@ -215,8 +219,8 @@ github.getContent = function( u, path, commit_id, callback ) {
   var values = decoded.path.split( '/' );
   
   github.api.repos.getContent({
-    user: values[1],
-    repo: values[2],
+    user: values[github.userPosition],
+    repo: values[github.repoPosition],
     path: path,
     ref: commit_id
   }, function( err, res ) {
@@ -250,9 +254,9 @@ github.getComments = function GithubGetComments( u, callback ) {
   // Function for making requests for comments.
   var getCommentsForPage = function GithubGetCommentsPage( ) {
     github.api.pullRequests.getComments({
-      user: values[1],
-      repo: values[2],
-      number: values[4],
+      user: values[github.userPosition],
+      repo: values[github.repoPosition],
+      number: values[github.pullNumberPosition]
       page: page,
       per_page: perPage
     }, function( err, res ) {

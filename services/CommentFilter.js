@@ -25,7 +25,7 @@ filter.prototype = {
    * @param {Array.Comment} toPost          Comments we are planning to post.
    * @param {Array.Comment} alreadyPosted   Comments that have already been posted.
    *
-   * @returns {Array.Comment}
+   * @returns {Array.Comment}               Array of comments.
    */
   filter: function CommentFilterFilter( toPost, alreadyPosted ) {
     var filteredPosts = [];
