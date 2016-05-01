@@ -227,7 +227,7 @@ reviewer.reviewChunk = function ReviewerReviewChunk( url, validators, chunk, com
           
           // Post these comments to git
           if ( comments.length > 0 ) {
-             reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
+            reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
           }
         }
         
