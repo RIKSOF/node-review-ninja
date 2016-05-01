@@ -21,11 +21,13 @@ github.setup( config.github.personalToken );
 /**
  * Post comments to a pull request
  *
- * @param url       URL for pull request.
- * @param comments  Array of comments.
- * @param callback  Callback once comments are posted.
+ * @param {string} url              URL for pull request.
+ * @param {Array.Comment} comments  Array of comments.
+ * @param {function} callback       Callback once comments are posted.
+ *
+ * @returns {undefined}
  */
-commenter.comment = function ( url, comments, callback ) {
+commenter.comment = function CommenterComment( url, comments, callback ) {
   // Once all comments are posted.
   var posted = _.after( comments.length, function() {
     callback();
@@ -61,12 +63,14 @@ commenter.comment = function ( url, comments, callback ) {
 /**
  * Post comments to the whole pull request
  *
- * @param url       URL for pull request.
- * @param comment   Single comment
- * @param callback  Callback once comments are posted.
+ * @param {string} url          URL for pull request.
+ * @param {Comment} comment     Single comment
+ * @param {function} callback   Callback once comments are posted.
+ *
+ * @returns {undefined}
  */
-commenter.commentOnIssue = function ( url, comment, callback ) {
-  github.commentOnIssue( url, comment, function(err, res) {
+commenter.commentOnIssue = function CommenterCommentOnIssue( url, comment, callback ) {
+  github.commentOnIssue( url, comment, function CommenterCommentOnIssueResponse(err, res) {
     if ( err ) {
       logger.error( err );
       logger.info( 'Caused by: ' + JSON.stringify( comment ) );
