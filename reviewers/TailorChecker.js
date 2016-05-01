@@ -3,7 +3,7 @@
 /**
  * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * @file Java Style Checker.
+ * @file Tailor Checker for Swift programming language.
  */
 
 // Our logger for logging to file and console
@@ -15,9 +15,9 @@ var _ = require( 'underscore' );
 /**
  * Constructor
  *
- * @class [Checker JavaCheckStyleChecker]
+ * @class [Checker TailorChecker]
  */
-var checker = function JavaCheckStyleChecker() {
+var checker = function TailorChecker() {
   
   /**
    * Array of file paths.
@@ -27,16 +27,16 @@ var checker = function JavaCheckStyleChecker() {
 
 checker.prototype = {
   
-  SEVERITY_HIGH: 'ERROR',
+  SEVERITY_HIGH: 'error',
   SEVERITY_MEDIUM: 2,
-  SEVERITY_WARN: 'WARN',
+  SEVERITY_WARN: 'warning',
   
   /**
    * Function is used to reset the checker for next pull review.
    *
    * @return {undefined}
    */
-  reset: function JavaCheckStyleReset() {
+  reset: function TailorCheckerReset() {
     this.checkedFiles = [];
   },
   
@@ -47,9 +47,9 @@ checker.prototype = {
    * @param {string} file   Relative path of file.
    * @returns {boolean}     If this checker validates given file.
    */
-  doesValidate: function JavaCheckStyleDoesValidate( file ) {
+  doesValidate: function TailorCheckerDoesValidate( file ) {
     var validates = false;
-    var included = ['.java'];
+    var included = ['.swift'];
     
     included.forEach( function eachInclude( e ) {
       if ( file.substr( -e.length) === e ) {
@@ -71,17 +71,18 @@ checker.prototype = {
   *
   * @return {undefined}
   */
-  processFile: function JavaCheckStyleProcessFile( path, source, callback ) {
+  processFile: function TailorCheckerProcessFile( path, source, callback ) {
     var me = this;
-    var lineNumberPosition = 3;
-    var messagePosition = 5;
-    var rulePosition = 6;
+    var lineNumberPosition = 2;
+    var severityPosition = 4;
+    var messagePosition = 6;
+    var rulePosition = 5;
     
     // Create a temporary file
     var tmp = require('tmp');
     var fs = require('fs');
     
-    tmp.file({ postfix: '.java' }, function _tempFileCreated(err, tempPath, fd, cleanupCallback) {
+    tmp.file({ postfix: '.swift' }, function _tempFileCreated(err, tempPath, fd, cleanupCallback) {
       if (err) {
         logger.error(err);
       } else {
@@ -89,11 +90,11 @@ checker.prototype = {
         // Write source to temporary file.
         fs.writeFile( tempPath, source, function _tempFileWritten(e) {
           var exec = require('child_process').exec;
-          var cmd = 'java -jar libs/checkstyle-6.17-all.jar -c /google_checks.xml ' + tempPath;
+          var cmd = 'tailor --no-color --except=forced-type-cast,todo-syntax ' + tempPath;
 
           // Execute the command.
           exec(cmd, function recvData(err2, stdout, stderr) {
-            var parseLine = /\[([A-Z]*)\] ([/a-zA-Z0-9~+._\-]*):([0-9]*):([0-9]*): ([a-zA-Z0-9 .+*/&|{}'";:_\-\[\]]*) \[([a-zA-Z]*)\]/g;
+            var parseLine = /([/a-zA-Z0-9~+._\-]*):([0-9]*):([0-9]*): ([a-z]*): \[([a-zA-Z0-9\-]*)\] ([a-zA-Z0-9 .+*/&|{}'";:_\-\[\]]*)/g;
             
             // Process all errors
             var errors = [];
@@ -118,7 +119,7 @@ checker.prototype = {
           
                 if ( result ) {
                   var error = {
-                    severity: result[1],
+                    severity: result[severityPosition],
                     file: path,
                     line: parseInt(result[lineNumberPosition]),
                     message: result[messagePosition],
@@ -153,7 +154,7 @@ checker.prototype = {
    *
    * @return {undefined}
    */
-  start: function JavaCheckStyleStart( from, baseSource, to, headSource, callback ) {
+  start: function TailorCheckerStart( from, baseSource, to, headSource, callback ) {
     var filesToCompare = 2;
     var me = this;
     var errors = {
@@ -162,7 +163,7 @@ checker.prototype = {
     };
     
     // Once everythins is done, finish off with this.
-    var allDone = _.after( filesToCompare, function JavaCheckStyleFileDone() {
+    var allDone = _.after( filesToCompare, function TailorCheckerFileDone() {
       // Remember this report.
       var report = {
         file: to,
@@ -174,13 +175,13 @@ checker.prototype = {
     }); 
     
     // Review the base source code
-    this.processFile( from, baseSource, function JavaCheckStyleBaseSourceErrors( errs ) {
+    this.processFile( from, baseSource, function TailorCheckerBaseSourceErrors( errs ) {
       errors.base = errs;
       allDone();
     });
     
     // Review the head source code.
-    this.processFile( to, headSource, function JavaCheckStyleHeadSourceErrors( errs ) {
+    this.processFile( to, headSource, function TailorCheckerHeadSourceErrors( errs ) {
       errors.head = errs;
       allDone();
     });
@@ -196,7 +197,7 @@ checker.prototype = {
    *
    * @return {undefined}
    */
-  step: function JavaCheckStyleStep( change, path, position, callback ) {
+  step: function TailorCheckerStep( change, path, position, callback ) {
     var comment = '';
     
     // On the line, only report on changes that were made.
@@ -210,7 +211,7 @@ checker.prototype = {
                 comment += '\n';
               }
               
-              comment += f.errors.head[i].message + '\n```java\n' + change.content + '\n```';
+              comment += f.errors.head[i].message + '\n```swift\n' + change.content + '\n```';
               f.errors.head[i].reported = true;
             }
           }
@@ -230,7 +231,7 @@ checker.prototype = {
    *
    * @return {undefined}
    */
-  done: function JavaCheckStyleDone( callback ) {
+  done: function TailorCheckerDone( callback ) {
     var comment = '';
     var maxErrorsPerFile = 5;
     
@@ -280,7 +281,7 @@ checker.prototype = {
               // All these comments are not in the base branch, so they
               // are additional comments. Need to make sure we did not
               // report them in the line by line review.
-              if ( !f.errors.head[headIndex].reported && f.errors.head[headIndex].severity >= this.SEVERITY_HIGH ) {
+              if ( !f.errors.head[headIndex].reported ) {
                 comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].message + '*';
                 errorsCount++;
               }
@@ -291,7 +292,7 @@ checker.prototype = {
             // All these comments are not in the base branch, so they
             // are additional comments. Need to make sure we did not
             // report them in the line by line review.
-            if ( !f.errors.head[headIndex].reported && f.errors.head[headIndex].severity >= this.SEVERITY_HIGH ) {
+            if ( !f.errors.head[headIndex].reported ) {
               comment += '\n**' + f.file + '(' + f.errors.head[ headIndex ].line + '):** *' + f.errors.head[ headIndex ].message + '*';
               errorsCount++;
             }

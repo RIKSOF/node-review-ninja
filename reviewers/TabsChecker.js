@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Tabs Checker
+ * @file Tabs Checker
  */
 
 /**
@@ -36,7 +36,7 @@ checker.prototype = {
   */
   doesValidate: function TabsCheckerDoesValidate( file ) {
     var validates = true;
-    var excluded = ['.pbxproj', '.xib', '.js'];
+    var excluded = ['.pbxproj', '.xib', '.js', '.java', '.swift', '.plist'];
     
     excluded.forEach( function( e ) {
       if ( file.substr( -e.length) === e ) {

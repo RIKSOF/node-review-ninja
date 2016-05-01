@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Reviewer service
+ * @file Reviewer service
  */
 
 var reviewer = {
@@ -29,7 +29,8 @@ var ninjas = [
   require( __dirname + '/../reviewers/GrammarChecker' ),
   require( __dirname + '/../reviewers/SaneLengthChecker' ),
   require( __dirname + '/../reviewers/ESLINTChecker' ),
-  require( __dirname + '/../reviewers/JavaCheckStyleChecker' )
+  require( __dirname + '/../reviewers/JavaCheckStyleChecker' ),
+  require( __dirname + '/../reviewers/TailorChecker' )
 ];
 
 /**
@@ -52,29 +53,33 @@ reviewer.review = function ReviewerReview( url, commitID, baseID, callback ) {
       logger.error( err );
     } else {
       
-      // Initialize all the checkers.
-      var checkers = [];
-      for ( var i = 0; i < ninjas.length; i++ ) {
-        checkers.push( new ninjas[i]() );
-      }
+      // Get all the comments already posted on this request.
+      github.getComments( url, function getReviewComments( postedComments ) {
+
+        // Initialize all the checkers.
+        var checkers = [];
+        for ( var i = 0; i < ninjas.length; i++ ) {
+          checkers.push( new ninjas[i]() );
+        }
       
-      // Step 1: Reset all checkers
-      reviewer.resetCheckers( checkers );
+        // Step 1: Reset all checkers
+        reviewer.resetCheckers( checkers );
       
-      // Step 2: Parse through all changes in the diff.
-      var files = parse( res );
+        // Step 2: Parse through all changes in the diff.
+        var files = parse( res );
       
-      // Step 3: Go through the files and check differences in each
-      // All files are prcessed. This implies the pull request
-      // has been fully reviewed. We will now let all the
-      // validators know. Some checkers will spend significant
-      // time completing this. So we wait for them to complete.
-      var fileProcessed = _.after( files.length, function ReviewerReviewFileProcessed() {
-        reviewer.reviewCompleted( url, checkers, callback );
-      });
+        // Step 3: Go through the files and check differences in each
+        // All files are prcessed. This implies the pull request
+        // has been fully reviewed. We will now let all the
+        // validators know. Some checkers will spend significant
+        // time completing this. So we wait for them to complete.
+        var fileProcessed = _.after( files.length, function ReviewerReviewFileProcessed() {
+          reviewer.reviewCompleted( url, checkers, callback );
+        });
       
-      files.forEach( function ReviewerReviewFileIterate( file ) {
-        reviewer.reviewFile( url, checkers, file, commitID, baseID, fileProcessed );
+        files.forEach( function ReviewerReviewFileIterate( file ) {
+          reviewer.reviewFile( url, checkers, file, commitID, baseID, postedComments, fileProcessed );
+        });
       });
     }
   });
@@ -139,17 +144,18 @@ reviewer.startReviewingFile = function ReviewerStartReviewingFile( url, validato
 /**
  * Review a single file.
  *
- * @param {string} url              URL of the pull request.
- * @param {Array.Checker} checkers  Array of checkers.
- * @param {string} file             File to be reviewed.
- * @param {string} commitID         Commit ID
- * @param {string} baseCommitID     Base Commit ID
- * @param {function} fileProcessed  Callback that is invoked when we complete
- *                                  processing a file.
+ * @param {string} url                    URL of the pull request.
+ * @param {Array.Checker} checkers        Array of checkers.
+ * @param {string} file                   File to be reviewed.
+ * @param {string} commitID               Commit ID
+ * @param {string} baseCommitID           Base Commit ID
+ * @param {Array.Comment} postedComments  Comments we have already posted and should not post again.
+ * @param {function} fileProcessed        Callback that is invoked when we complete
+ *                                        processing a file.
  *
  * @returns {undefined}
  */
-reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID, baseCommitID, fileProcessed ) {
+reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID, baseCommitID, postedComments, fileProcessed ) {
   // Name of the new file. Refresh the position.
   var path = file.to;
   var position = 0;
@@ -168,13 +174,13 @@ reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID
   });
 
   // Go through all chunks in the new file.
-  if ( file.chunks.length > 0 ) {
+  if ( file.chunks.length > 0 && validators.length > 0 ) {
     
     // Download the version of this file from base and head branches.
     reviewer.startReviewingFile( url, validators, file, commitID, baseCommitID, function ReviewerReviewFileDone() {
       file.chunks.forEach( function ReviewerReviewChunk( chunk ) {
         position = reviewer.reviewChunk( url, validators, chunk, commitID, path, 
-          position, chunkProcessed );
+          position, postedComments, chunkProcessed );
       });
     });
     
@@ -186,18 +192,21 @@ reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID
 /**
  * Review a single chunk.
  *
- * @param {string} url                URL of the pull request.
- * @param {Array.Checker} validators  Array of validators.
- * @param {object} chunk              Chunk of changes.
- * @param {string} commitID           Commit ID.
- * @param {string} path               Path of file being changed.
- * @param {number} position           Diff position in current file.
- * @param {function} chunkProcessed   Callback once this chunk is processed.
+ * @param {string} url                    URL of the pull request.
+ * @param {Array.Checker} validators      Array of validators.
+ * @param {object} chunk                  Chunk of changes.
+ * @param {string} commitID               Commit ID.
+ * @param {string} path                   Path of file being changed.
+ * @param {number} position               Diff position in current file.
+ * @param {Array.Comment} postedComments  Comments we have already posted and should not post again.
+ * @param {function} chunkProcessed       Callback once this chunk is processed.
  *
  * @returns {number} Updated position in current chunk.
  */
-reviewer.reviewChunk = function ReviewerReviewChunk( url, validators, chunk, commitID, path, position, chunkProcessed ) {
-  
+reviewer.reviewChunk = function ReviewerReviewChunk( url, validators, chunk, commitID, path, position, postedComments, chunkProcessed ) {
+  var CommentFilter = require( __dirname + '/../services/CommentFilter' );
+  var filter = new CommentFilter();
+   
   // Track when a line is processed.
   var linesProcessed = _.after( chunk.changes.length, function ReviewerReviewLineProcessed() {
     chunkProcessed();
@@ -213,8 +222,12 @@ reviewer.reviewChunk = function ReviewerReviewChunk( url, validators, chunk, com
       var done = _.after( validators.length, function ReviewerValidatorProcessedChunk() {
         
         if ( comments.length > 0 ) {
+          comments = filter.filter( comments, postedComments );
+          
           // Post these comments to git
-          reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
+          if ( comments.length > 0 ) {
+             reviewer.commenter.comment( url, comments, function ReviewerReviewChunkCommentPosted() {} );
+          }
         }
         
         linesProcessed();

@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Grammar Checker
+ * @file Grammar Checker
  */
 String.prototype.splice = function( start, delCount, newSubStr ) {
   return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
@@ -115,7 +115,11 @@ checker.prototype = {
                 // Also ignore spaces for single words.
                 if ( allowCaseSensitive === false && c.text.toLowerCase() === c.correct.toLowerCase().replace(/ /g, '')) {
                 } else if ( c.correct !== '' ) {
-                  comment += 'For `' + c.text + '` did you mean `' + c.correct + '`? ';
+                  if ( comment.length !== 0 ) {
+                    comment += ' ';
+                  }
+                  
+                  comment += 'For `' + c.text + '` did you mean `' + c.correct + '`?';
                 }
               });
             }

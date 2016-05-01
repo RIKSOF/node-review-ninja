@@ -1,10 +1,12 @@
+'use strict';
+
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Console Commenter service - Prints comment to console.
+ * @file Console Commenter service - Prints comment to console.
  */
 
-commenter = {};
+var commenter = {};
 
 // Our logger for logging to file and console
 var logger = require( __dirname + '/../services/Logger' );
@@ -12,11 +14,13 @@ var logger = require( __dirname + '/../services/Logger' );
 /**
  * Post comments to a pull request
  *
- * @param url       URL for pull request.
- * @param comments  Array of comments.
- * @param callback  Callback once comments are posted.
+ * @param {string} url          URL for pull request.
+ * @param {Comment} comments    Array of comments.
+ * @param {function} callback   Callback once comments are posted.
+ *
+ * @returns {undefined}
  */
-commenter.comment = function ( url, comments, callback ) {
+commenter.comment = function ConsoleCommenterComment( url, comments, callback ) {
   logger.info( url + '\n' + JSON.stringify( comments ) );
   callback();
 };
@@ -24,11 +28,13 @@ commenter.comment = function ( url, comments, callback ) {
 /**
  * Post comments to the whole pull request
  *
- * @param url       URL for pull request.
- * @param comment   Single comment
- * @param callback  Callback once comments are posted.
+ * @param {string} url            URL for pull request.
+ * @param {Comment} comment       Single comment
+ * @param {function} callback     Callback once comments are posted.
+ *
+ * @returns {undefined}
  */
-commenter.commentOnIssue = function ( url, comment, callback ) {
+commenter.commentOnIssue = function ConsoleCommenterCommentOnIssue( url, comment, callback ) {
   logger.info( url + '\n' + JSON.stringify( comment ) );
   callback();
 };

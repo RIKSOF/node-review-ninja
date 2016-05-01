@@ -37,3 +37,6 @@ config.js
 
 # Data file
 pulls.txt
+
+# For mac
+.DS_Store

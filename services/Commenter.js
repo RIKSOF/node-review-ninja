@@ -1,10 +1,12 @@
+'use strict';
+
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * Commenter service
+ * @file Commenter service
  */
 
-commenter = {};
+var commenter = {};
 
 var config = require( __dirname + '/../config' );
 
@@ -21,38 +23,59 @@ github.setup( config.github.personalToken );
 /**
  * Post comments to a pull request
  *
- * @param url       URL for pull request.
- * @param comments  Array of comments.
- * @param callback  Callback once comments are posted.
+ * @param {string} url              URL for pull request.
+ * @param {Array.Comment} comments  Array of comments.
+ * @param {function} callback       Callback once comments are posted.
+ *
+ * @returns {undefined}
  */
-commenter.comment = function ( url, comments, callback ) {
+commenter.comment = function CommenterComment( url, comments, callback ) {
   // Once all comments are posted.
   var posted = _.after( comments.length, function() {
     callback();
   });
   
-  comments.forEach( function( c ) {
-    github.commentOnPull( url, c, function(err, res) {
+  // Track the comments that have been posted
+  var commentToPost = 0;
+  
+  // The function we will use to make posts.
+  var postComment = function fPostComment() {
+    github.commentOnPull( url, comments[commentToPost], function(err, res) {
       if ( err ) {
         logger.error( err );
+        logger.info( 'Caused by: ' + JSON.stringify( comments[commentToPost] ) );
+      } 
+      
+      commentToPost++;
+        
+      // If there are more comments to be posted.
+      if ( commentToPost < comments.length ) {
+        // Post each comment after a break of a few seconds.
+        setTimeout( postComment, config.app.commentInterval );
       }
-
+      
       posted();
     });
-  });
+  };
+  
+  // Start posting the comments. One comment is posted at a time.
+  setTimeout( postComment, config.app.commentInterval );
 };
 
 /**
  * Post comments to the whole pull request
  *
- * @param url       URL for pull request.
- * @param comment   Single comment
- * @param callback  Callback once comments are posted.
+ * @param {string} url          URL for pull request.
+ * @param {Comment} comment     Single comment
+ * @param {function} callback   Callback once comments are posted.
+ *
+ * @returns {undefined}
  */
-commenter.commentOnIssue = function ( url, comment, callback ) {
-  github.commentOnIssue( url, comment, function(err, res) {
+commenter.commentOnIssue = function CommenterCommentOnIssue( url, comment, callback ) {
+  github.commentOnIssue( url, comment, function CommenterCommentOnIssueResponse(err, res) {
     if ( err ) {
       logger.error( err );
+      logger.info( 'Caused by: ' + JSON.stringify( comment ) );
     }
     callback();
   });
