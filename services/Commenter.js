@@ -1,10 +1,12 @@
+'use strict';
+
 /**
  * @author Copyright RIKSOF (Private) Limited 2016.
  *
  * @file Commenter service
  */
 
-commenter = {};
+var commenter = {};
 
 var config = require( __dirname + '/../config' );
 

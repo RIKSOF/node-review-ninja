@@ -5,7 +5,7 @@
  *
  * @file GitHub service
  */
-github = {
+var github = {
   userPosition: 1,
   repoPosition: 2,
   pullNumberPosition: 4
@@ -256,7 +256,7 @@ github.getComments = function GithubGetComments( u, callback ) {
     github.api.pullRequests.getComments({
       user: values[github.userPosition],
       repo: values[github.repoPosition],
-      number: values[github.pullNumberPosition]
+      number: values[github.pullNumberPosition],
       page: page,
       per_page: perPage
     }, function( err, res ) {

@@ -1,10 +1,12 @@
+'use strict';
+
 /**
  * @author Copyright RIKSOF (Private) Limited 2016.
  *
  * @file Console Commenter service - Prints comment to console.
  */
 
-commenter = {};
+var commenter = {};
 
 // Our logger for logging to file and console
 var logger = require( __dirname + '/../services/Logger' );
