@@ -1,12 +1,14 @@
+'use strict';
+
 /**
- * Copyright RIKSOF (Private) Limited 2016.
+ * @author Copyright RIKSOF (Private) Limited 2016.
  *
- * System-wide configurations.
+ * @file System-wide configurations.
  */
-var config = {}
+var config = {};
 
 // Application Information
-config.app = {}
+config.app = {};
 config.app.data = __dirname + '/pulls.txt';
 config.app.interval = 300000;
 config.app.commentInterval = 5000;
@@ -17,7 +19,7 @@ config.app.mode.PRODUCTION = 'production';
 config.app.mode.current = config.app.mode.DEVELOPMENT;
 
 // Log files
-config.logger = {}
+config.logger = {};
 config.logger.dir = __dirname + '/logs/';
 config.logger.errorFile = 'error.log';
 config.logger.consoleFile = 'console.log';
@@ -25,7 +27,8 @@ config.logger.maxFileSize = 1000000;
 config.logger.maxFiles = 1;
 
 // GitHub Connection
-config.github = {}
+config.github = {};
+config.github.timeout = 5000;
 config.github.org = '';
 config.github.personalToken = '';
 

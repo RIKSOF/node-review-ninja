@@ -24,40 +24,40 @@ github.setup = function GithubSetup( token ) {
   
   github.diffapi = new GitHubApi({
     // required
-    version: "3.0.0",
+    version: '3.0.0',
     // optional
     debug: false,
-    protocol: "https",
-    host: "api.github.com", // should be api.github.com for GitHub
-    pathPrefix: "", // for some GHEs; none for GitHub
-    timeout: 5000,
+    protocol: 'https',
+    host: 'api.github.com', // should be api.github.com for GitHub
+    pathPrefix: '', // for some GHEs; none for GitHub
+    timeout: config.github.timeout,
     headers: {
-      "user-agent": "My-Cool-GitHub-App", // GitHub is happy with a unique user agent,
-      "Accept": "application/vnd.github.diff"
+      'user-agent': 'Review-Ninja', // GitHub is happy with a unique user agent,
+      'Accept': 'application/vnd.github.diff'
     }
   });
   
   github.diffapi.authenticate({
-      type: "oauth",
+      type: 'oauth',
       token: token
   });
   
   github.api = new GitHubApi({
     // required
-    version: "3.0.0",
+    version: '3.0.0',
     // optional
     debug: false,
-    protocol: "https",
-    host: "api.github.com", // should be api.github.com for GitHub
-    pathPrefix: "", // for some GHEs; none for GitHub
-    timeout: 5000,
+    protocol: 'https',
+    host: 'api.github.com', // should be api.github.com for GitHub
+    pathPrefix: '', // for some GHEs; none for GitHub
+    timeout: config.github.timeout,
     headers: {
-      "user-agent": "My-Cool-GitHub-App" // GitHub is happy with a unique user agent,
+      'user-agent': 'Review-Ninja' // GitHub is happy with a unique user agent,
     }
   });
   
   github.api.authenticate({
-      type: "oauth",
+      type: 'oauth',
       token: token
   });
 };
