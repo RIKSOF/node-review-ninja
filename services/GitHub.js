@@ -259,7 +259,7 @@ github.getComments = function GithubGetComments( u, callback ) {
       number: values[github.pullNumberPosition],
       page: page,
       per_page: perPage
-    }, function( err, res ) {
+    }, function GithubCommentsPageResponse( err, res ) {
       
       if ( err ) {
         logger.error( err );
