@@ -38,8 +38,8 @@ github.setup = function GithubSetup( token ) {
   });
   
   github.diffapi.authenticate({
-      type: 'oauth',
-      token: token
+    type: 'oauth',
+    token: token
   });
   
   github.api = new GitHubApi({
@@ -57,8 +57,8 @@ github.setup = function GithubSetup( token ) {
   });
   
   github.api.authenticate({
-      type: 'oauth',
-      token: token
+    type: 'oauth',
+    token: token
   });
 };
 
@@ -68,7 +68,7 @@ github.setup = function GithubSetup( token ) {
  * @param {string} u            URL for request.
  * @param {function} callback   Once the request completes.
  *
- * @retruns {undefined}
+ * @returns {undefined}
  */
 github.getDiff = function GithubDiff( u, callback ) {
   var url = require('url');
