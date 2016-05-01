@@ -206,7 +206,11 @@ checker.prototype = {
         if ( f.file === path ) {
           for ( var i = 0; i < f.errors.head.length; i++ ) {
             if ( f.errors.head[i] !== null && f.errors.head[i].line === change.ln ) {
-              comment += f.errors.head[i].message + '\n```java\n' + change.content + '\n```\n';
+              if ( comment.length !== 0 ) {
+                comment += '\n';
+              }
+              
+              comment += f.errors.head[i].message + '\n```java\n' + change.content + '\n```';
               f.errors.head[i].reported = true;
             }
           }

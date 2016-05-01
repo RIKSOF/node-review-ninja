@@ -35,6 +35,7 @@ commenter.comment = function ( url, comments, callback ) {
     github.commentOnPull( url, c, function(err, res) {
       if ( err ) {
         logger.error( err );
+        logger.info( 'Caused by: ' + JSON.stringify( c ) );
       }
 
       posted();
@@ -53,6 +54,7 @@ commenter.commentOnIssue = function ( url, comment, callback ) {
   github.commentOnIssue( url, comment, function(err, res) {
     if ( err ) {
       logger.error( err );
+      logger.info( 'Caused by: ' + JSON.stringify( comment ) );
     }
     callback();
   });

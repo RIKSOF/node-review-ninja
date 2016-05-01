@@ -208,5 +208,55 @@ github.getContent = function( u, path, commit_id, callback ) {
   });
 };
 
+
+/**
+ * Function gets all the comments on a pull request.
+ *
+ * @param {string} u            URL of the pull request.
+ * @param {function} callback   Callback function once response is received.
+ *
+ * @returns {undefined}
+ */
+github.getComments = function GithubGetComments( u, callback ) {
+  // Our logger for logging to file and console
+  var logger = require( __dirname + '/../services/Logger' );
+  var url = require('url');
+  var decoded = url.parse( u );
+  var values = decoded.path.split( '/' );
+  var page = 1;
+  var perPage = 100;
+  var allComments = [];
+  
+  // Function for making requests for comments.
+  var getCommentsForPage = function GithubGetCommentsPage( ) {
+    github.api.pullRequests.getComments({
+      user: values[1],
+      repo: values[2],
+      number: values[4],
+      page: page,
+      per_page: perPage
+    }, function( err, res ) {
+      
+      if ( err ) {
+        logger.error( err );
+      } else {
+        var temp = eval( res );
+        allComments = allComments.concat( temp );
+        
+        // If we have more comments to get, go to next page.
+        if ( temp.length >= perPage ) {
+          page++;
+          getCommentsForPage();
+        } else {
+          callback( allComments );
+        }
+      }
+    });
+  };
+  
+  // Get all the comments.
+  getCommentsForPage();
+};
+
 // Make the module available to all
 module.exports = github;
