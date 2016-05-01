@@ -146,7 +146,7 @@ function reviewPull( p, callback ) {
 // Setup the directories if they are not there. This is done just once.
 logger.setupDirectory();
 
-if ( config.app.mode.current != config.app.mode.TESTING ) {
+if ( config.app.mode.current !== config.app.mode.TESTING ) {
   logger.info( 'Review Ninja is up and kicking...(' + config.app.mode.current + ')' );
   
   // Pulls request model
