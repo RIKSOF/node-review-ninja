@@ -30,7 +30,8 @@ var ninjas = [
   require( __dirname + '/../reviewers/SaneLengthChecker' ),
   require( __dirname + '/../reviewers/ESLINTChecker' ),
   require( __dirname + '/../reviewers/JavaCheckStyleChecker' ),
-  require( __dirname + '/../reviewers/TailorChecker' )
+  require( __dirname + '/../reviewers/TailorChecker' ),
+  require( __dirname + '/../reviewers/W3CCssChecker' )
 ];
 
 /**
