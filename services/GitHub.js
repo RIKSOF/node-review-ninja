@@ -166,7 +166,8 @@ github.getRepositories = function GithubGetRepository( org, callback ) {
   var logger = require( __dirname + '/../services/Logger' );
   
   github.api.repos.getFromOrg({
-    org: org
+    org: org,
+    per_page: 100
   }, function GithubRepositoryResponse( err, res ) {
     if ( err ) {
       logger.error( err );
