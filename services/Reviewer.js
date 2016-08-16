@@ -32,7 +32,8 @@ var ninjas = [
   require( __dirname + '/../reviewers/JavaCheckStyleChecker' ),
   require( __dirname + '/../reviewers/TailorChecker' ),
   require( __dirname + '/../reviewers/W3CCssChecker' ),
-  require( __dirname + '/../reviewers/W3CHtmlChecker' )
+  require( __dirname + '/../reviewers/W3CHtmlChecker' ),
+  require( __dirname + '/../reviewers/OClintChecker' )
 ];
 
 /**
@@ -162,7 +163,7 @@ reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID
   var path = file.to;
   var position = 0;
   
-  // Find all the checkers for this file.
+  // Find all the checkers for this file.TailorChecker
   var validators = [];
   checkers.forEach( function ReviewerReviewCheckerIterate( c ) {
     if ( c.doesValidate( path ) ) {
