@@ -163,7 +163,7 @@ reviewer.reviewFile = function ReviewerReviewFile( url, checkers, file, commitID
   var path = file.to;
   var position = 0;
   
-  // Find all the checkers for this file.TailorChecker
+  // Find all the checkers for this file.
   var validators = [];
   checkers.forEach( function ReviewerReviewCheckerIterate( c ) {
     if ( c.doesValidate( path ) ) {
